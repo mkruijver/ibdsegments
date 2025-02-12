@@ -47,3 +47,11 @@ po/*~
 
 # RStudio Connect folder
 rsconnect/
+
+# Rcpp generated
+RcppExports*
+
+# binaries
+*.o
+*.dll
+
