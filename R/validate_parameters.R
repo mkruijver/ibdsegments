@@ -50,6 +50,19 @@
   }
 }
 
+.validate_pedigree_ids <- function(ids, pedigree){
+
+  person_idx <- match(ids, table = pedigree$ID)
+
+  if (anyNA(person_idx)) {
+    stop("Id(s) ",
+         paste(c( ids[is.na(person_idx)]), collapse = ", "),
+         , " not found in pedigree")
+  }
+
+  person_idx
+}
+
 .validate_recombination_rates_compatible_with_obs <- function(obs, argument_name, recombination_rates){
   expected_length_of_recombination_rates <- length(obs) - 1L
 

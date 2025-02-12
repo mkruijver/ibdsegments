@@ -2,5 +2,6 @@
 
 export(ibd_pr)
 export(inheritance_space)
+export(multi_ibd_patterns)
 import(Rcpp)
 useDynLib(ibdsegments, .registration = TRUE)

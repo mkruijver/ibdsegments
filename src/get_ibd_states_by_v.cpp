@@ -298,121 +298,120 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
   return ibd_states;
 }
 
-
 // [[Rcpp::export]]
-IntegerMatrix get_multi_ibd_patterns_by_v(int number_of_ped_members,
-                                          IntegerVector ped_row_is_founder_idx,
-                                          IntegerVector from_allele_idx,
-                                          IntegerVector to_allele_idx,
-                                          IntegerVector person_ids,
-                                          int number_of_fixed_transmissions,
-                                          IntegerVector top_to_bottom_order,
-                                          bool minimal = true){
-  // reserve return value
-  int number_of_transmissions = from_allele_idx.size();
-  int number_of_non_fixed_transmissions = number_of_transmissions - number_of_fixed_transmissions;
+std::vector<int> minimal_pattern(IntegerVector x, IntegerVector person_idx_1_based){
 
-  int number_of_canonical_inheritance_vectors = 1 << number_of_non_fixed_transmissions;;
-  IntegerVector ibd_states(number_of_canonical_inheritance_vectors);
+  std::vector<int> ibd_pattern(person_idx_1_based.size()*2);
 
-  // assign allele vector
-  IntegerVector x(2 * number_of_ped_members);
+  std::unordered_map<int, int> distinct_allele_num_by_placeholder;
+  int distinct_allele_num = 1;
 
-  // assign founder alleles
-  for (int i_founder = 0; i_founder < ped_row_is_founder_idx.size(); i_founder++){
-    int idx_1based = ped_row_is_founder_idx[i_founder];
+  for (int i_person = 0; i_person < person_idx_1_based.size(); i_person++){
 
-    x[2 * idx_1based - 2] = 2 * i_founder + 1;
-    x[2 * idx_1based - 1] = 2 * i_founder + 2;
+    // grab allele placeholders for this person
+    int idx_person = person_idx_1_based[i_person];
+
+    int a = x[2 * (idx_person - 1)];
+    int b = x[2 * (idx_person - 1) + 1];
+
+    // do we need to swap labels to obtain the minimal pattern?
+    auto it_a = distinct_allele_num_by_placeholder.find(a);
+    auto it_b = distinct_allele_num_by_placeholder.find(b);
+
+    bool a_is_new = it_a == distinct_allele_num_by_placeholder.end();
+    bool b_is_new = it_b == distinct_allele_num_by_placeholder.end();
+
+    if ((a_is_new && b_is_new) && (a != b)){
+      // both new so it may be necessary to swap their labels
+      for (int j_person = i_person + 1; j_person < person_idx_1_based.size(); j_person++){
+        int idx_person2 = person_idx_1_based[j_person];
+
+        int c =  x[2 * (idx_person2 - 1)];
+        int d =  x[2 * (idx_person2 - 1) + 1];
+
+        // if this is the first genotype with exactly one of a,b
+        // then swap if it's b
+        bool one_of_a = (a == c) | (a == d);
+        bool one_of_b = (b == c) | (b == d);
+
+        if (one_of_a ^ one_of_b){
+
+          if (one_of_b){
+            std::swap(a, b);
+          }
+          break;
+        }
+      }
+    }
+
+    // count distinct alleles
+    for (int i_person_allele = 0; i_person_allele < 2; i_person_allele++){
+      int allele = i_person_allele == 0 ? a : b;
+
+      // do we have a number for this allele yet?
+      auto it = distinct_allele_num_by_placeholder.find(allele);
+
+      if (it == distinct_allele_num_by_placeholder.end()){
+        // new distinct allele
+        distinct_allele_num_by_placeholder[allele] = distinct_allele_num;
+        ibd_pattern[2 * i_person + i_person_allele] = distinct_allele_num;
+
+        distinct_allele_num++;
+      }
+      else{
+        // known allele
+        ibd_pattern[2 * i_person + i_person_allele] = it->second;
+      }
+    }
+
+    // keep minimal pattern ordered
+    if (ibd_pattern[2 * i_person] > ibd_pattern[2 * i_person + 1]){
+      std::swap(ibd_pattern[2 * i_person], ibd_pattern[2 * i_person + 1]);
+    }
   }
 
-  IntegerMatrix ibd_patterns(2 * person_ids.size(), number_of_canonical_inheritance_vectors);
+  return ibd_pattern;
+}
 
-  // drop alleles for each choicce of inheritance vector
+
+// [[Rcpp::export]]
+List get_multi_ibd_patterns_by_v(int number_of_ped_members,
+                                  IntegerVector ped_row_is_founder_idx,
+                                  IntegerVector from_allele_idx,
+                                  IntegerVector to_allele_idx,
+                                  IntegerVector person_ids,
+                                  int number_of_fixed_transmissions,
+                                  IntegerVector top_to_bottom_order,
+                                  bool minimal = true){
+
+  int pattern_size = person_ids.size() * 2;
+
+  int number_of_transmissions = from_allele_idx.size();
+  int number_of_non_fixed_transmissions = number_of_transmissions - number_of_fixed_transmissions;
+  int number_of_canonical_inheritance_vectors = 1 << number_of_non_fixed_transmissions;
+
+  std::set<std::vector<int>> unique_patterns_set;
+  std::vector<const std::vector<int>*> pattern_references_by_v(number_of_canonical_inheritance_vectors);
+
+  // assign allele vector
+  IntegerVector x = assign_founder_alleles(number_of_ped_members, ped_row_is_founder_idx);
+
+  // drop alleles for each choice of inheritance vector
   for (int v = 0; v < number_of_canonical_inheritance_vectors; v++){
 
     // drop alleles down the pedigree for this inheritance vector
-    for (int i_order = 0; i_order < top_to_bottom_order.size(); i_order++){
+    drop_founder_alleles(x, v, from_allele_idx, to_allele_idx, top_to_bottom_order);
 
-      int i_transmission = top_to_bottom_order[i_order] - 1;
-
-      int from_idx = from_allele_idx[i_transmission] + ((v >> i_transmission) & 1);
-      int to_idx = to_allele_idx[i_transmission];
-
-      x[to_idx - 1] = x[from_idx -1];
-    }
-
-    // determine multi person ibd patterns
     if (minimal){
-      std::unordered_map<int, int> distinct_allele_num_by_placeholder;
-      int distinct_allele_num = 1;
+      // determine multi person ibd patterns
+      std::vector<int> m = minimal_pattern(x, person_ids);
 
-      for (int i_person = 0; i_person < person_ids.size(); i_person++){
-
-        // grab allele placeholders for this person
-        int idx_person = person_ids[i_person];
-
-        int a = x[2 * (idx_person - 1)];
-        int b = x[2 * (idx_person - 1) + 1];
-
-        // do we need to swap labels to obtain the minimal pattern?
-        auto it_a = distinct_allele_num_by_placeholder.find(a);
-        auto it_b = distinct_allele_num_by_placeholder.find(b);
-
-        bool a_is_new = it_a == distinct_allele_num_by_placeholder.end();
-        bool b_is_new = it_b == distinct_allele_num_by_placeholder.end();
-
-        if ((a_is_new && b_is_new) && (a != b)){
-          // both new so it may be necessary to swap their labels
-          for (int j_person = i_person + 1; j_person < person_ids.size(); j_person++){
-            int idx_person2 = person_ids[j_person];
-
-            int c =  x[2 * (idx_person2 - 1)];
-            int d =  x[2 * (idx_person2 - 1) + 1];
-
-            // if this is the first genotype with exactly one of a,b
-            // then swap if it's b
-            bool one_of_a = (a == c) | (a == d);
-            bool one_of_b = (b == c) | (b == d);
-
-            if (one_of_a ^ one_of_b){
-
-              if (one_of_b){
-                std::swap(a, b);
-              }
-              break;
-            }
-          }
-        }
-
-        // count distinct alleles
-        for (int i_person_allele = 0; i_person_allele < 2; i_person_allele++){
-          int allele = i_person_allele == 0 ? a : b;
-
-          // do we have a number for this allele yet?
-          auto it = distinct_allele_num_by_placeholder.find(allele);
-
-          if (it == distinct_allele_num_by_placeholder.end()){
-            // new distinct allele
-            distinct_allele_num_by_placeholder[allele] = distinct_allele_num;
-            ibd_patterns(2 * i_person + i_person_allele, v) = distinct_allele_num;
-
-            distinct_allele_num++;
-          }
-          else{
-            // known allele
-            ibd_patterns(2 * i_person + i_person_allele, v) = it->second;
-          }
-        }
-
-        // keep minimal pattern ordered
-        if (ibd_patterns(2 * i_person, v) > ibd_patterns(2 * i_person + 1, v)){
-          std::swap(ibd_patterns(2 * i_person, v), ibd_patterns(2 * i_person + 1, v));
-        }
-      }
+      auto insertion_result = unique_patterns_set.insert(m);
+      pattern_references_by_v[v] = &(*insertion_result.first);
     }
     else{
-      // for debugging, do not attempt to find the minimal pattern
+      std::vector<int> m(pattern_size);
+
       for (int i_person = 0; i_person < person_ids.size(); i_person++){
 
         // grab allele placeholders for this person
@@ -421,13 +420,160 @@ IntegerMatrix get_multi_ibd_patterns_by_v(int number_of_ped_members,
         int a = x[2 * (idx_person - 1)];
         int b = x[2 * (idx_person - 1) + 1];
 
-        ibd_patterns(2 * i_person, v) = a;
-        ibd_patterns(2 * i_person + 1, v) = b;
+        m[2 * i_person] = a;
+        m[2 * i_person + 1] = b;
       }
+
+      auto insertion_result = unique_patterns_set.insert(m);
+      pattern_references_by_v[v] = &(*insertion_result.first);
     }
-
-
   }
 
-  return ibd_patterns;
+  // list out all unique patterns
+  int number_of_unique_patterns = unique_patterns_set.size();
+  IntegerMatrix unique_patterns(pattern_size, number_of_unique_patterns);
+
+  auto dest = unique_patterns.begin();
+  for (const auto& element : unique_patterns_set) {
+    std::copy(element.begin(), element.end(), dest);
+    dest += pattern_size;
+  }
+
+  // list out index among unique patterns by v
+  IntegerVector pattern_idx_by_v(number_of_canonical_inheritance_vectors);
+
+  for (int v = 0; v < number_of_canonical_inheritance_vectors; v++) {
+
+    const std::vector<int>* ref = pattern_references_by_v[v];
+    auto it = unique_patterns_set.find(*ref);
+
+    int index = std::distance(unique_patterns_set.begin(), it);
+    pattern_idx_by_v[v] = index + 1;
+  }
+
+  return List::create( _["unique_patterns"] = unique_patterns,
+                       _["pattern_idx_by_v"] = pattern_idx_by_v);
+}
+
+// [[Rcpp::export]]
+DataFrame multi_ibd_patterns_by_v_df(IntegerMatrix unique_patterns,
+                                     IntegerVector pattern_idx_by_v,
+                                     CharacterVector ids,
+                                     double pr_v){
+
+  int number_of_ids = ids.size();
+  int number_of_patterns = unique_patterns.ncol();
+
+  if (unique_patterns.nrow() != 2 * number_of_ids){
+    Rcpp::stop("unique_patterns and ids have incompatible dimensions");
+  }
+
+  // start building list to be converted to df
+  Rcpp::List result(1 + number_of_ids);
+  Rcpp::CharacterVector col_names(result.size());
+
+  // probability column
+  col_names[0] = "Prob";
+  std::vector<long> count_by_pattern(number_of_patterns);
+  for (const auto pattern_idx: pattern_idx_by_v){
+    count_by_pattern[pattern_idx-1]++;
+  }
+
+  Rcpp::NumericVector pr(number_of_patterns);
+  for (int i = 0; i < number_of_patterns; i++){
+    pr[i] = count_by_pattern[i] * pr_v;
+  }
+  result[0] = pr;
+
+  // id columns
+  for (int i = 0; i < number_of_ids; i++){
+    CharacterVector id_column(number_of_patterns);
+
+    for (int i_pattern = 0; i_pattern < number_of_patterns; i_pattern++){
+      int a = unique_patterns(2*i, i_pattern);
+      int b = unique_patterns(2*i + 1, i_pattern);
+
+      id_column[i_pattern] = std::to_string(a) + " " + std::to_string(b);
+    }
+
+    result[1+i] = id_column;
+    col_names[1+i] = ids[i];
+  }
+
+  DataFrame df = Rcpp::DataFrame(result);
+  df.attr("names") = col_names;
+
+  return df;
+}
+
+std::vector<int> which(LogicalVector x){
+  std::vector<int> these;
+  these.reserve(x.size());
+
+  for (int i = 0; i < x.size(); i++){
+    if (x[i]){
+      these.push_back(i);
+    }
+  }
+
+  return these;
+}
+
+// [[Rcpp::export]]
+DataFrame multi_ibd_patterns_df(NumericVector prob,
+                                IntegerMatrix multi_locus_m_idx,
+                                IntegerMatrix unique_patterns,
+                                CharacterVector ids){
+
+  int number_of_ids = ids.size();
+  int number_of_patterns = unique_patterns.ncol();
+
+  if (unique_patterns.nrow() != 2 * number_of_ids){
+    Rcpp::stop("unique_patterns and ids have incompatible dimensions");
+  }
+
+  // only return rows with positive probability
+  LogicalVector prob_is_positive = prob > 0;
+  int number_of_rows = Rcpp::sum(prob_is_positive);
+  std::vector<int> idx_positive = which(prob_is_positive);
+
+  // start building list to be converted to df
+  int number_of_loci = multi_locus_m_idx.ncol();
+  Rcpp::List result(1 + number_of_ids * number_of_loci);
+  Rcpp::CharacterVector col_names(result.size());
+
+  // probability column
+  col_names[0] = "Prob";
+  result[0] = prob[prob_is_positive];
+
+  // id columns by locus
+  int i_df_col = 0;
+  for (int i_locus = 0; i_locus < number_of_loci; i_locus++){
+    for (int i_person = 0; i_person < number_of_ids; i_person++){
+      CharacterVector id_column(number_of_rows);
+
+      for (int i_row = 0; i_row < number_of_rows; i_row++){
+        int idx = idx_positive[i_row];
+
+        int i_pattern = multi_locus_m_idx(idx, i_locus) - 1;
+
+        int a = unique_patterns(2 * i_person, i_pattern);
+        int b = unique_patterns(2 * i_person + 1, i_pattern);
+
+        id_column[i_row] = std::to_string(a) + " " + std::to_string(b);
+      }
+
+      result[1 + i_df_col] = id_column;
+
+      std::string id = Rcpp::as<std::string>(ids[i_person]);
+      col_names[1 + i_df_col] =  id + "@"+ std::to_string(i_locus+1) +"";
+
+      i_df_col++;
+    }
+  }
+
+  DataFrame df = Rcpp::DataFrame(result);
+  df.attr("names") = col_names;
+
+  return df;
 }
