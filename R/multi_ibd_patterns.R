@@ -14,7 +14,7 @@
 #' # Compute IBD patterns for two full siblings...
 #' multi_ibd_patterns(pedtools::nuclearPed(nch = 2))
 #'
-#' # ... and the generalisation to three sibling
+#' # ... and the generalisation to three siblings
 #' multi_ibd_patterns(pedtools::nuclearPed(nch = 3))
 #'
 #' # Two full siblings at two tightly linked loci
