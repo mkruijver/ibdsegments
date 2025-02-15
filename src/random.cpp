@@ -35,34 +35,7 @@ List random_ibd(int n,
   stats_total_length_in_state.resize(n);
   stats_number_of_segments_in_state.resize(n);
 
-  // determine transmissions that can be ignored
-  // because they are fixed and don't affect other transmissions
-  LogicalVector transmission_is_ignored(number_of_transmissions);
-  int number_ignored = 0;
-  for (int i_fixed = 0; i_fixed < number_of_fixed_transmissions; i_fixed++){
-    if (fixed_transmission_masks[i_fixed] == 0){
-      // this transmission can be ignored
-      transmission_is_ignored[number_of_non_fixed_transmissions + i_fixed] = true;
-      number_ignored++;
-    }
-  }
-
-  if (number_ignored == number_of_transmissions){
-    Rcpp::stop("all transmissions are ignored");
-  }
-
-  // collect indices of not ignored transmissions
-  std::vector<int> idx_transmissions_not_ignored;
-  int number_of_transmissions_not_ignored = number_of_transmissions - number_ignored;
-
-  idx_transmissions_not_ignored.reserve(number_of_transmissions_not_ignored);
-  for (int i = 0; i < transmission_is_ignored.size(); i++){
-    if (!transmission_is_ignored[i]){
-      idx_transmissions_not_ignored.push_back(i);
-    }
-  }
-
-  double rate = 0.01 * (number_of_transmissions_not_ignored);
+  double rate = 0.01 * number_of_transmissions;
   double mu = 1.0 / rate;
 
   for (int i = 0; i < n; i++){
@@ -99,9 +72,7 @@ List random_ibd(int n,
 
         if (!end_reached){
           // flip a bit
-          int i_transmission_not_ignored = std::floor(
-                R::runif(0, number_of_transmissions_not_ignored));
-          int i_transmission = idx_transmissions_not_ignored[i_transmission_not_ignored];
+          int i_transmission = std::floor(R::runif(0, number_of_transmissions));
 
           if (i_transmission < number_of_non_fixed_transmissions){
             int flip = 1 << i_transmission;

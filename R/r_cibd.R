@@ -43,7 +43,7 @@ r_cibd <- function(n,
 
   random_ibd(n = n, chromosome_length = chromosome_length,
              ibd_state_by_v = i$ibd_state_by_v,
-             number_of_transmissions = nrow(i$transmissions),
-             fixed_transmission_masks = i$fixed_transmission_masks,
+             number_of_transmissions = i$number_of_relevant_transmissions,
+             fixed_transmission_masks = i$relevant_masks,
              state_stats = ibd_state)
 }

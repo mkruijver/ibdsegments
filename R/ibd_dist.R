@@ -72,7 +72,7 @@ ibd_dist <- function(pedigree,
   i <- inheritance_space(pedigree = pedigree, persons = persons,
                          coefficients = coefficients)
 
-  lambda_max <- 0.01 * max(chromosome_length) * nrow(i$transmissions)
+  lambda_max <- 0.01 * max(chromosome_length) * i$number_of_relevant_transmissions
   joint_n_max <- qpois(1.0 - 1e-16, lambda = lambda_max)
 
   if (is.infinite(joint_n_max)){
@@ -84,8 +84,8 @@ ibd_dist <- function(pedigree,
   # recombinations
   V <- pr_number_of_intervals_in_state_by_n(ibd_state = ibd_state,
                                             ibd_state_by_v = i$ibd_state_by_v, n_max = joint_n_max,
-                                            number_of_transmissions = nrow(i$transmissions),
-                                            masks = i$fixed_transmission_masks)
+                                            number_of_transmissions = i$number_of_relevant_transmissions,
+                                            masks = i$relevant_masks)
   V_lbeta <- precompute_V_lbeta(V)
 
   colnames(V) <- paste0("n=", 0:(ncol(V) - 1))
@@ -93,7 +93,7 @@ ibd_dist <- function(pedigree,
 
   fs <- lapply(seq_along(chromosome_length), function(i_chromosome){
     lambda <- 0.01 * chromosome_length[i_chromosome] *
-      nrow(i$transmissions)
+      i$number_of_relevant_transmissions
 
     n_max <- qpois(1.0 - 1e-16, lambda = lambda)
     n <- 0:n_max

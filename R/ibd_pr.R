@@ -55,8 +55,8 @@ ibd_pr <- function(ibd,
   log10_likelihood <- sum(ibd_log10_pr_cpp(ibd_state_by_v = i$ibd_state_by_v,
                                             ibd_by_locus = ibd,
                                             recombination_rate_by_locus = recombination_rate_by_locus,
-                                            number_of_transmissions = nrow(i$transmissions),
-                                            fixed_transmission_masks = i$fixed_transmission_masks))
+                                            number_of_transmissions = i$number_of_relevant_transmissions,
+                                            fixed_transmission_masks = i$relevant_masks))
 
   if (log10){
     return(log10_likelihood)

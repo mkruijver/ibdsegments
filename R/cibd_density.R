@@ -83,8 +83,8 @@ cibd_density <- function(cM = r_cibd_result$length,
   if (missing(r_cibd_result)){
     log10_pr <- log10_ibd_segment_pr_cpp(cM, ibd,
                                          i$ibd_state_by_v,
-                                         nrow(i$transmissions),
-                                         i$fixed_transmission_masks)
+                                         i$number_of_relevant_transmissions,
+                                         i$relevant_masks)
   }
   else{
     log10_pr <- log10_ibd_segment_pr_vectorised_cpp(sample = r_cibd_result$samples$sample,
@@ -92,8 +92,8 @@ cibd_density <- function(cM = r_cibd_result$length,
                                         obs_cM = r_cibd_result$samples$length,
                                         obs_ibd = r_cibd_result$samples$state,
                                         ibd_state_by_v = i$ibd_state_by_v,
-                                        number_of_transmissions = nrow(i$transmissions),
-                                        fixed_transmission_masks = i$fixed_transmission_masks)
+                                        number_of_transmissions = i$number_of_relevant_transmissions,
+                                        fixed_transmission_masks = i$relevant_masks)
   }
 
   if (log10){
