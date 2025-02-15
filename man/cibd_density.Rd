@@ -5,10 +5,11 @@
 \title{Probability density of continuously observed IBD segment lengths for pedigree members}
 \usage{
 cibd_density(
-  cM,
-  ibd,
+  cM = r_cibd_result$length,
+  ibd = r_cibd_result$state,
   pedigree,
   persons = pedtools::leaves(pedigree),
+  r_cibd_result,
   coefficients = "kappa",
   log10 = FALSE
 )
@@ -21,6 +22,8 @@ cibd_density(
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
 \item{persons}{Persons for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
+
+\item{r_cibd_result}{Optionally a result from \code{\link{r_cibd}} for which the probability density is evaluated.}
 
 \item{coefficients}{One of \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
 
@@ -72,4 +75,16 @@ plot(cM, pr_2ibd, type="l")
 # since there are four meioses, the sojourn time in this IBD state
 # follows an exponential distribution with rate 0.04
 stopifnot(all.equal(pr_2ibd, pexp(cM, rate = 0.04, lower.tail = FALSE)))
+
+## Using the output from r_cibd directly to compute evidential value
+## of IBD segments on chromosome for distinguishing first and second cousins
+ped_c1 <- pedtools::cousinPed()
+ped_c2 <- pedtools::cousinPed(degree = 2)
+
+r_c1 <- r_cibd(n = 1e2, pedigree = ped_c1)
+
+lr <- cibd_density(r_cibd_result = r_c1, pedigree = ped_c1)/
+  cibd_density(r_cibd_result = r_c1, pedigree = ped_c2)
+
+hist(log10(lr))
 }

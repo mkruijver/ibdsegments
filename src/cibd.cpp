@@ -373,10 +373,10 @@ NumericVector pr_stay_and_leave(int stay_in_ibd,
 
 // [[Rcpp::export]]
 double log10_ibd_segment_pr_cpp(NumericVector obs_cM,
-                                         IntegerVector obs_ibd,
-                                         IntegerVector ibd_state_by_v,
-                                         int number_of_transmissions,
-                                         IntegerVector fixed_transmission_masks){
+                                IntegerVector obs_ibd,
+                                IntegerVector ibd_state_by_v,
+                                int number_of_transmissions,
+                                IntegerVector fixed_transmission_masks){
 
   for (int i_segment = 0; i_segment < obs_cM.size(); i_segment++){
     if (obs_cM[i_segment] < 0) return std::log10(0);
@@ -448,6 +448,54 @@ double log10_ibd_segment_pr_cpp(NumericVector obs_cM,
   }
 
   return log10_pr_total;
+}
+
+// [[Rcpp::export]]
+NumericVector log10_ibd_segment_pr_vectorised_cpp(
+    IntegerVector sample, IntegerVector chromosome,
+    NumericVector obs_cM, IntegerVector obs_ibd,
+    IntegerVector ibd_state_by_v, int number_of_transmissions,
+    IntegerVector fixed_transmission_masks)
+{
+  std::vector<double> log10_pr;
+
+  int i_sample_start = 0;
+  int i_chromosome_start = 0;
+
+  int n_minus_one = sample.size() - 1;
+
+  double log10_pr_sample = 0;
+
+  for (int i = 0; i <= n_minus_one; i++){
+
+    bool input_stop = i == n_minus_one;
+
+    bool chromosome_stop = input_stop || (chromosome[i+1] != chromosome[i_chromosome_start]);
+    bool sample_stop = input_stop || (sample[i+1] != sample[i_sample_start]);
+
+    if (chromosome_stop || sample_stop){
+      // calculate prob for this sample/chromosome combo
+      NumericVector obs_cM_i = NumericVector(obs_cM.begin() + i_chromosome_start,
+                                             obs_cM.begin() + i + 1);
+      IntegerVector obs_ibd_i = IntegerVector(obs_ibd.begin() + i_chromosome_start,
+                                              obs_ibd.begin() + i + 1);
+
+      double log10_pr_i = log10_ibd_segment_pr_cpp(obs_cM_i, obs_ibd_i,
+                                                   ibd_state_by_v, number_of_transmissions,
+                                                   fixed_transmission_masks);
+
+      log10_pr_sample += log10_pr_i;
+      i_chromosome_start = i + 1;
+    }
+    if (sample_stop){
+      i_sample_start = i + 1;
+
+      log10_pr.push_back(log10_pr_sample);
+      log10_pr_sample = 0;
+    }
+  }
+
+  return wrap(log10_pr);
 }
 
 // [[Rcpp::export]]

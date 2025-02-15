@@ -5,6 +5,7 @@
 #'
 #' @param cM Numeric vector with lengths of segments (centiMorgan).
 #' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
+#' @param r_cibd_result Optionally a result from [`r_cibd`] for which the probability density is evaluated.
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
 #' @param coefficients One of `"kappa"`, `"identity"` or `"detailed"`.
@@ -49,9 +50,24 @@
 #' # since there are four meioses, the sojourn time in this IBD state
 #' # follows an exponential distribution with rate 0.04
 #' stopifnot(all.equal(pr_2ibd, pexp(cM, rate = 0.04, lower.tail = FALSE)))
+#'
+#' ## Using the output from r_cibd directly to compute evidential value
+#' ## of IBD segments on chromosome for distinguishing first and second cousins
+#' ped_c1 <- pedtools::cousinPed()
+#' ped_c2 <- pedtools::cousinPed(degree = 2)
+#'
+#' r_c1 <- r_cibd(n = 1e2, pedigree = ped_c1)
+#'
+#' lr <- cibd_density(r_cibd_result = r_c1, pedigree = ped_c1)/
+#'   cibd_density(r_cibd_result = r_c1, pedigree = ped_c2)
+#'
+#' hist(log10(lr))
+#
 #' @export
-cibd_density <- function(cM, ibd,
+cibd_density <- function(cM = r_cibd_result$length,
+                         ibd = r_cibd_result$state,
                          pedigree, persons = pedtools::leaves(pedigree),
+                         r_cibd_result,
                          coefficients = "kappa",
                          log10 = FALSE){
 
@@ -64,10 +80,21 @@ cibd_density <- function(cM, ibd,
   i <- inheritance_space(pedigree = pedigree, persons = persons,
                          coefficients = coefficients)
 
-  log10_pr <- log10_ibd_segment_pr_cpp(cM, ibd,
-                                       i$ibd_state_by_v,
-                                       nrow(i$transmissions),
-                                       i$fixed_transmission_masks)
+  if (missing(r_cibd_result)){
+    log10_pr <- log10_ibd_segment_pr_cpp(cM, ibd,
+                                         i$ibd_state_by_v,
+                                         nrow(i$transmissions),
+                                         i$fixed_transmission_masks)
+  }
+  else{
+    log10_pr <- log10_ibd_segment_pr_vectorised_cpp(sample = r_cibd_result$samples$sample,
+                                        chromosome = r_cibd_result$samples$chromosome,
+                                        obs_cM = r_cibd_result$samples$length,
+                                        obs_ibd = r_cibd_result$samples$state,
+                                        ibd_state_by_v = i$ibd_state_by_v,
+                                        number_of_transmissions = nrow(i$transmissions),
+                                        fixed_transmission_masks = i$fixed_transmission_masks)
+  }
 
   if (log10){
     return(log10_pr)
@@ -76,3 +103,6 @@ cibd_density <- function(cM, ibd,
     return(10 ^ log10_pr)
   }
 }
+
+
+
