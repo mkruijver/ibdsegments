@@ -10,14 +10,14 @@ cibd_density(
   pedigree,
   persons = pedtools::leaves(pedigree),
   r_cibd_result,
-  coefficients = "kappa",
+  coefficients = "ibd",
   log10 = FALSE
 )
 }
 \arguments{
 \item{cM}{Numeric vector with lengths of segments (centiMorgan).}
 
-\item{ibd}{Integer vector. Taking values 0, 1, 2 for \code{coefficients = "kappa"}, 1, ..., 9 for \code{coefficients="identity"} and 1, ..., 15 for \code{coefficients = "detailed"}.}
+\item{ibd}{Integer vector. Taking values 0, 1, 2 for \code{coefficients = "ibd"} or \code{coefficients = "kappa"}, 1, ..., 9 for \code{coefficients="identity"} and 1, ..., 15 for \code{coefficients = "detailed"}.}
 
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
@@ -25,7 +25,7 @@ cibd_density(
 
 \item{r_cibd_result}{Optionally a result from \code{\link{r_cibd}} for which the probability density is evaluated.}
 
-\item{coefficients}{One of \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
+\item{coefficients}{One of \code{"ibd"} (default), \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
 
 \item{log10}{Should the log10 probability density be returned? Default is \code{FALSE}.}
 }

@@ -18,7 +18,7 @@
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
 #' @param fraction If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.
-#' @param coefficients One of `"kappa"`, `"identity"` or `"detailed"`.
+#' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
 #' @param convolve Should the distribution of the sum (across chromosomes) be obtained?
@@ -61,7 +61,7 @@
 total_ibd_dist <- function(pedigree,
                      persons = pedtools::leaves(pedigree),
                      fraction = FALSE,
-                     coefficients = "kappa",
+                     coefficients = "ibd",
                      ibd_state = 1L,
                      chromosome_length = 267.77,
                      convolve = TRUE){

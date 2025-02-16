@@ -3,11 +3,11 @@
 #' The `ibd_pr` function computes the likelihood of IBD
 #' for one position or multiple linked markers on the same chromosome.
 #'
-#' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
-#' @param pedigree Pedigree in [`pedtools::ped`] form.
+#' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "ibd"` or `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
+#' @param pedigree Pedigree in [`pedtools::ped`] form.kappa
 #' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`]`(pedigree)`.
 #' @param recombination_rate_by_locus Numeric vector with length one shorter than `ibd`.
-#' @param coefficients One of `"kappa"`, `"identity"` or `"detailed"`.
+#' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param log10 Should the log10 likelihood be returned? Default is `FALSE`.
 #' @return Numeric
 #' @examples
@@ -38,7 +38,7 @@
 ibd_pr <- function(ibd,
                    pedigree, persons = pedtools::leaves(pedigree),
                    recombination_rate_by_locus = numeric(),
-                   coefficients = "kappa",
+                   coefficients = "ibd",
                    log10 = FALSE){
 
   coeff <- .validate_coefficients(coefficients)

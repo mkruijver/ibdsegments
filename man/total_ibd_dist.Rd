@@ -8,7 +8,7 @@ total_ibd_dist(
   pedigree,
   persons = pedtools::leaves(pedigree),
   fraction = FALSE,
-  coefficients = "kappa",
+  coefficients = "ibd",
   ibd_state = 1L,
   chromosome_length = 267.77,
   convolve = TRUE
@@ -21,7 +21,7 @@ total_ibd_dist(
 
 \item{fraction}{If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.}
 
-\item{coefficients}{One of \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
+\item{coefficients}{One of \code{"ibd"} (default), \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
 
 \item{ibd_state}{Default is 1.}
 

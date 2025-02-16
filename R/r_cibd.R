@@ -5,7 +5,7 @@
 #' @param n Number of observations
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
-#' @param coefficients One of `"kappa"`, `"identity"` or `"detailed"`.
+#' @param coefficients One of `"ibd` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
 #'
@@ -30,7 +30,7 @@
 r_cibd <- function(n,
                    pedigree,
                    persons = pedtools::leaves(pedigree),
-                   coefficients = "kappa",
+                   coefficients = "ibd",
                    ibd_state = 1L,
                    chromosome_length = 267.77){
 

@@ -11,9 +11,9 @@
 
 .check_persons_compatible_with_coeff <- function(persons, coeff){
 
-  if (coeff == COEFF_KAPPA){
+  if (coeff == COEFF_IBD){
     if (length(persons) < 2){
-      stop("Persons needs to have at least length two for kappa coefficients")
+      stop("Persons needs to have at least length two for IBD status coefficients")
     }
   }
   else{

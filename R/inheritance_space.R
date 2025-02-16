@@ -3,7 +3,7 @@
 #' The `inheritance_space` function determines the IBD vectors for a pedigree.
 #'
 #' @export
-inheritance_space <- function(pedigree, persons, coefficients = "kappa",
+inheritance_space <- function(pedigree, persons, coefficients = "ibd",
                               exploit_symmetries = TRUE){
 
   .validate_pedigree(pedigree)

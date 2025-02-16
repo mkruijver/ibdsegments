@@ -1,15 +1,37 @@
+test_that("compare to manual values for ibd", {
+
+  expect_equal(get_ibd_state_2p(c(1,1,1,1), 1, 2), 2)
+  expect_equal(get_ibd_state_2p(c(1,1,1,2), 1, 2), 1)
+  expect_equal(get_ibd_state_2p(c(1,1,2,1), 1, 2), 1)
+  expect_equal(get_ibd_state_2p(c(1,1,2,2), 1, 2), 0)
+
+  expect_equal(get_ibd_state_2p(c(1,2,1,1), 1, 2), 1)
+  expect_equal(get_ibd_state_2p(c(1,2,1,2), 1, 2), 2)
+  expect_equal(get_ibd_state_2p(c(1,2,1,3), 1, 2), 1)
+  expect_equal(get_ibd_state_2p(c(1,2,2,1), 1, 2), 2)
+  expect_equal(get_ibd_state_2p(c(1,2,2,2), 1, 2), 1)
+  expect_equal(get_ibd_state_2p(c(1,2,2,3), 1, 2), 1)
+  expect_equal(get_ibd_state_2p(c(1,2,3,1), 1, 2), 1)
+  expect_equal(get_ibd_state_2p(c(1,2,3,2), 1, 2), 1)
+  expect_equal(get_ibd_state_2p(c(1,2,3,3), 1, 2), 0)
+
+  expect_equal(get_ibd_state_2p(c(1,2,3,4), 1, 2), 0)
+
+})
+
+
 test_that("compare to manual values for kappa", {
 
-  expect_equal(get_kappa_state(c(1,1,1,1), 1, 2), 2)
-  expect_equal(get_kappa_state(c(1,1,1,2), 1, 2), 1)
-  expect_equal(get_kappa_state(c(1,1,2,1), 1, 2), 1)
+  expect_equal(get_kappa_state(c(1,1,1,1), 1, 2), 0)
+  expect_equal(get_kappa_state(c(1,1,1,2), 1, 2), 0)
+  expect_equal(get_kappa_state(c(1,1,2,1), 1, 2), 0)
   expect_equal(get_kappa_state(c(1,1,2,2), 1, 2), 0)
 
-  expect_equal(get_kappa_state(c(1,2,1,1), 1, 2), 1)
+  expect_equal(get_kappa_state(c(1,2,1,1), 1, 2), 0)
   expect_equal(get_kappa_state(c(1,2,1,2), 1, 2), 2)
   expect_equal(get_kappa_state(c(1,2,1,3), 1, 2), 1)
   expect_equal(get_kappa_state(c(1,2,2,1), 1, 2), 2)
-  expect_equal(get_kappa_state(c(1,2,2,2), 1, 2), 1)
+  expect_equal(get_kappa_state(c(1,2,2,2), 1, 2), 0)
   expect_equal(get_kappa_state(c(1,2,2,3), 1, 2), 1)
   expect_equal(get_kappa_state(c(1,2,3,1), 1, 2), 1)
   expect_equal(get_kappa_state(c(1,2,3,2), 1, 2), 1)
@@ -18,29 +40,28 @@ test_that("compare to manual values for kappa", {
   expect_equal(get_kappa_state(c(1,2,3,4), 1, 2), 0)
 
 })
+test_that("compare to manual values for multi-person ibd", {
 
-test_that("compare to manual values for multi-person kappa", {
+  expect_equal(get_joint_ibd_state(c(1,1,1,1,1,1), 1:3), 2)
 
-  expect_equal(get_joint_kappa_state(c(1,1,1,1,1,1), 1:3), 2)
+  expect_equal(get_joint_ibd_state(c(1,1,1,1,1,2), 1:3), 1)
+  expect_equal(get_joint_ibd_state(c(1,1,1,2,1,1), 1:3), 1)
+  expect_equal(get_joint_ibd_state(c(1,2,1,1,1,1), 1:3), 1)
 
-  expect_equal(get_joint_kappa_state(c(1,1,1,1,1,2), 1:3), 1)
-  expect_equal(get_joint_kappa_state(c(1,1,1,2,1,1), 1:3), 1)
-  expect_equal(get_joint_kappa_state(c(1,2,1,1,1,1), 1:3), 1)
+  expect_equal(get_joint_ibd_state(c(1,2,1,2,1,2), 1:3), 2)
+  expect_equal(get_joint_ibd_state(c(1,2,1,2,1,2), 1:3), 2)
+  expect_equal(get_joint_ibd_state(c(1,2,1,2,1,2), 1:3), 2)
 
-  expect_equal(get_joint_kappa_state(c(1,2,1,2,1,2), 1:3), 2)
-  expect_equal(get_joint_kappa_state(c(1,2,1,2,1,2), 1:3), 2)
-  expect_equal(get_joint_kappa_state(c(1,2,1,2,1,2), 1:3), 2)
+  expect_equal(get_joint_ibd_state(c(1,2,1,1,1,2), 1:3), 1)
+  expect_equal(get_joint_ibd_state(c(1,2,1,1,1,2), 1:3), 1)
+  expect_equal(get_joint_ibd_state(c(1,2,1,1,1,2), 1:3), 1)
 
-  expect_equal(get_joint_kappa_state(c(1,2,1,1,1,2), 1:3), 1)
-  expect_equal(get_joint_kappa_state(c(1,2,1,1,1,2), 1:3), 1)
-  expect_equal(get_joint_kappa_state(c(1,2,1,1,1,2), 1:3), 1)
+  expect_equal(get_joint_ibd_state(c(1,2,1,1,2,3), 1:3), 0)
+  expect_equal(get_joint_ibd_state(c(1,2,1,2,1,1), 1:3), 1)
+  expect_equal(get_joint_ibd_state(c(1,2,1,2,2,2), 1:3), 1)
 
-  expect_equal(get_joint_kappa_state(c(1,2,1,1,2,3), 1:3), 0)
-  expect_equal(get_joint_kappa_state(c(1,2,1,2,1,1), 1:3), 1)
-  expect_equal(get_joint_kappa_state(c(1,2,1,2,2,2), 1:3), 1)
-
-  expect_equal(get_joint_kappa_state(c(1,1,2,2,1,1), 1:3), 0)
-  expect_equal(get_joint_kappa_state(c(1,1,2,2,2,2), 1:3), 0)
+  expect_equal(get_joint_ibd_state(c(1,1,2,2,1,1), 1:3), 0)
+  expect_equal(get_joint_ibd_state(c(1,1,2,2,2,2), 1:3), 0)
 })
 
 

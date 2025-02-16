@@ -1,12 +1,13 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
+const int COEFF_IBD = 1;
 const int COEFF_KAPPA = 2;
 const int COEFF_IDENTITY = 9;
 const int COEFF_DETAILED = 15;
 
 // [[Rcpp::export]]
-int get_kappa_state(IntegerVector x, int person_idx1, int person_idx2){
+int get_ibd_state_2p(IntegerVector x, int person_idx1, int person_idx2){
   int a = x[2 * person_idx1 - 2];
   int b = x[2 * person_idx1 - 1];
 
@@ -27,7 +28,23 @@ int get_kappa_state(IntegerVector x, int person_idx1, int person_idx2){
 }
 
 // [[Rcpp::export]]
-int get_joint_kappa_state(IntegerVector x, IntegerVector persons_idx){
+int get_kappa_state(IntegerVector x, int person_idx1, int person_idx2){
+  int a = x[2 * person_idx1 - 2];
+  int b = x[2 * person_idx1 - 1];
+
+  int c = x[2 * person_idx2 - 2];
+  int d = x[2 * person_idx2 - 1];
+
+  if (a==b) return 0;
+  if (c==d) return 0;
+
+  int kappa = (a == c) + (a == d) + (b == c) + (b == d);
+
+  return kappa;
+}
+
+// [[Rcpp::export]]
+int get_joint_ibd_state(IntegerVector x, IntegerVector persons_idx){
   if (persons_idx.size() < 2){
     Rcpp::stop("need at least two persons");
   }
@@ -181,13 +198,15 @@ int get_detailed_Jacquard_state(IntegerVector x, int person_idx1, int person_idx
 int get_ibd_state(IntegerVector x, int coeff, IntegerVector persons_idx){
 
   switch(coeff){
-  case COEFF_KAPPA:
+  case COEFF_IBD:
     if (persons_idx.size() == 2){
-      return get_kappa_state(x, persons_idx[0], persons_idx[1]);
+      return get_ibd_state_2p(x, persons_idx[0], persons_idx[1]);
     }
     else{
-      return get_joint_kappa_state(x, persons_idx);
+      return get_joint_ibd_state(x, persons_idx);
     }
+  case COEFF_KAPPA:
+    return get_kappa_state(x, persons_idx[0], persons_idx[1]);
   case COEFF_IDENTITY:
     return get_Jacquard_state(x, persons_idx[0], persons_idx[1]);
   case COEFF_DETAILED:

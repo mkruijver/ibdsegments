@@ -4,11 +4,11 @@
 #' IBD segments on a chromosome.
 #'
 #' @param cM Numeric vector with lengths of segments (centiMorgan).
-#' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
+#' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "ibd"` or `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
 #' @param r_cibd_result Optionally a result from [`r_cibd`] for which the probability density is evaluated.
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
-#' @param coefficients One of `"kappa"`, `"identity"` or `"detailed"`.
+#' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param log10 Should the log10 probability density be returned? Default is `FALSE`.
 #' @return Numeric
 #' @examples
@@ -68,7 +68,7 @@ cibd_density <- function(cM = r_cibd_result$length,
                          ibd = r_cibd_result$state,
                          pedigree, persons = pedtools::leaves(pedigree),
                          r_cibd_result,
-                         coefficients = "kappa",
+                         coefficients = "ibd",
                          log10 = FALSE){
 
   # validate inputs

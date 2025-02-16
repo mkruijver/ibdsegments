@@ -7,7 +7,7 @@
 inheritance_space(
   pedigree,
   persons,
-  coefficients = "kappa",
+  coefficients = "ibd",
   exploit_symmetries = TRUE
 )
 }

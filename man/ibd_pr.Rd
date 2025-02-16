@@ -9,20 +9,20 @@ ibd_pr(
   pedigree,
   persons = pedtools::leaves(pedigree),
   recombination_rate_by_locus = numeric(),
-  coefficients = "kappa",
+  coefficients = "ibd",
   log10 = FALSE
 )
 }
 \arguments{
-\item{ibd}{Integer vector. Taking values 0, 1, 2 for \code{coefficients = "kappa"}, 1, ..., 9 for \code{coefficients="identity"} and 1, ..., 15 for \code{coefficients = "detailed"}.}
+\item{ibd}{Integer vector. Taking values 0, 1, 2 for \code{coefficients = "ibd"} or \code{coefficients = "kappa"}, 1, ..., 9 for \code{coefficients="identity"} and 1, ..., 15 for \code{coefficients = "detailed"}.}
 
-\item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
+\item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.kappa}
 
 \item{persons}{Persons for which IBD is observed. Defaults to \code{\link[pedtools:ped_subgroups]{pedtools::leaves}}\code{(pedigree)}.}
 
 \item{recombination_rate_by_locus}{Numeric vector with length one shorter than \code{ibd}.}
 
-\item{coefficients}{One of \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
+\item{coefficients}{One of \code{"ibd"} (default), \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
 
 \item{log10}{Should the log10 likelihood be returned? Default is \code{FALSE}.}
 }

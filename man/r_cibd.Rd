@@ -8,7 +8,7 @@ r_cibd(
   n,
   pedigree,
   persons = pedtools::leaves(pedigree),
-  coefficients = "kappa",
+  coefficients = "ibd",
   ibd_state = 1L,
   chromosome_length = 267.77
 )
@@ -20,7 +20,7 @@ r_cibd(
 
 \item{persons}{Persons for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
 
-\item{coefficients}{One of \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
+\item{coefficients}{One of \verb{"ibd} (default), \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
 
 \item{ibd_state}{Default is 1.}
 
