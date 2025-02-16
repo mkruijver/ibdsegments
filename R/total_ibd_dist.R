@@ -1,9 +1,19 @@
 #' Compute probability distribution of total IBD
 #'
-#' The `ibd_dist` function computes the probability distribution
-#' of the total IBD fraction over an autosome. A function is returned
-#' that gives the probability density at 0 < x < 1 and the point masses
-#' at x=0 and x=1.
+#' The `total_ibd_dist` function computes the probability distribution
+#' of the total IBD length (or fraction) over one or more autosomes.
+#'
+#' For many pedigree relationships, the probability distribution of the
+#' total IBD length over one chromosome is a mixture of two point masses
+#' (0 and chromosome length) and a continuous density.
+#'
+#' If `convolve=TRUE` (the default) and `chromosome_length` has length
+#' great than one, the convolution of the distributions will be obtained
+#' by FFT using the [`convolve_ibd_dists`] function. Convolution will
+#' typically produce a rapidly increasing number of point masses
+#' with very small probabilities which are discarded if the
+#' probability falls below a threshold; see [`convolve_ibd_dists`]
+#' for details and finer control.
 #'
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
@@ -29,9 +39,9 @@
 #'           ibd_pr(1, ped_gp, persons = c(1,5))))
 #'
 #' # Compute IBD distributions
-#' d_av <- ibd_dist(ped_av)
-#' d_hs <- ibd_dist(ped_hs)
-#' d_gp <- ibd_dist(ped_gp, persons = c(1,5))
+#' d_av <- total_ibd_dist(ped_av)
+#' d_hs <- total_ibd_dist(ped_hs)
+#' d_gp <- total_ibd_dist(ped_gp, persons = c(1,5))
 #'
 #' # the point masses are different
 #' d_av
@@ -48,7 +58,7 @@
 #' require(ggplot2)
 #' ggplot(df, aes(x = cM, y = y, color = Relationship)) + geom_line()
 #' @export
-ibd_dist <- function(pedigree,
+total_ibd_dist <- function(pedigree,
                      persons = pedtools::leaves(pedigree),
                      fraction = FALSE,
                      coefficients = "kappa",
