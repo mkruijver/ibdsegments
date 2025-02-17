@@ -7,6 +7,14 @@ const int COEFF_IDENTITY = 9;
 const int COEFF_DETAILED = 15;
 
 // [[Rcpp::export]]
+int get_ibd_state_1p(IntegerVector x, int person_idx){
+  int a = x[2 * person_idx - 2];
+  int b = x[2 * person_idx - 1];
+
+  return a==b;
+}
+
+// [[Rcpp::export]]
 int get_ibd_state_2p(IntegerVector x, int person_idx1, int person_idx2){
   int a = x[2 * person_idx1 - 2];
   int b = x[2 * person_idx1 - 1];
@@ -199,7 +207,10 @@ int get_ibd_state(IntegerVector x, int coeff, IntegerVector persons_idx){
 
   switch(coeff){
   case COEFF_IBD:
-    if (persons_idx.size() == 2){
+    if (persons_idx.size() == 1){
+      return get_ibd_state_1p(x, persons_idx[0]);
+    }
+    else if (persons_idx.size() == 2){
       return get_ibd_state_2p(x, persons_idx[0], persons_idx[1]);
     }
     else{
