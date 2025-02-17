@@ -88,7 +88,9 @@ NumericVector ibd_log10_pr_cpp(IntegerVector ibd_state_by_v,
                                IntegerVector ibd_by_locus,
                                NumericVector recombination_rate_by_locus,
                                int number_of_transmissions,
-                               IntegerVector fixed_transmission_masks){
+                               IntegerVector fixed_transmission_masks,
+                               double pr_v_constant,
+                               NumericVector pr_v_biased){
 
   int number_of_fixed_transmissions = fixed_transmission_masks.size();
   int number_of_bits = number_of_transmissions - number_of_fixed_transmissions;
@@ -97,7 +99,13 @@ NumericVector ibd_log10_pr_cpp(IntegerVector ibd_state_by_v,
   NumericVector log10_pr_by_locus(ibd_by_locus.size(), -INFINITY);
 
   // assign uniform prior on transmission vectors
-  NumericVector v_prior(ibd_state_by_v.size(), 1.0 / ibd_state_by_v.size());
+  NumericVector v_prior;
+  if (pr_v_constant >= 0){
+    v_prior = NumericVector(ibd_state_by_v.size(), pr_v_constant);
+  }
+  else{
+    v_prior = pr_v_biased;
+  }
 
   // reserve memory for a posterior
   NumericVector v_posterior(ibd_state_by_v.size());

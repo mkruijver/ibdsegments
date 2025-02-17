@@ -24,6 +24,23 @@
   }
 }
 
+.assert_no_founder_inbreeding <- function(pedigree, reason){
+  if (pedtools::hasInbredFounders(pedigree)){
+    stop(reason)
+  }
+}
+
+.assert_persons_are_not_inbred_founders <- function(pedigree, persons){
+
+  persons_idx <- match(persons, pedigree$ID)
+  persons_idx_is_founder <- pedigree$FIDX[persons_idx] == 0L
+
+  f <- pedtools::founderInbreeding(pedigree, persons[persons_idx_is_founder],)
+  if (any(f > 0)){
+    stop("Persons should not include inbred founders")
+  }
+}
+
 .validate_obs_compatible_with_coeff <- function(obs, argument_name, coeff){
   nm <- NAME_BY_COEFF_NAME[as.character(coeff)]
   if (is.null(nm)) stop("Unknown coefficient value: ", coeff)
@@ -40,13 +57,17 @@
   }
 }
 
-.validate_pedigree <- function(pedigree){
+.validate_pedigree <- function(pedigree, continuous_genome = FALSE){
   if (!inherits(pedigree, "ped")){
     stop("pedigree should be of class ped")
   }
 
   if (!pedtools::hasParentsBeforeChildren(pedigree)){
     stop("pedigree should list parents before children")
+  }
+
+  if (continuous_genome){
+    .assert_no_founder_inbreeding(pedigree, "founder inbreeding is not supported for continuous ibd methods")
   }
 }
 

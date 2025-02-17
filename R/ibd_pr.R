@@ -4,7 +4,7 @@
 #' for one position or multiple linked markers on the same chromosome.
 #'
 #' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "ibd"` or `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
-#' @param pedigree Pedigree in [`pedtools::ped`] form.kappa
+#' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`]`(pedigree)`.
 #' @param recombination_rate_by_locus Numeric vector with length one shorter than `ibd`.
 #' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
@@ -49,14 +49,32 @@ ibd_pr <- function(ibd,
     "recombination_rate_by_locus", recombination_rate_by_locus)
   .validate_logical(log10, "log10")
 
+  if (length(recombination_rate_by_locus) > 0){
+    .assert_no_founder_inbreeding(pedigree,
+        "Founder inbreeding is not supported for calculations involving more than one locus")
+  }
+
+
   i <- inheritance_space(pedigree = pedigree, persons = persons,
                          coefficients = coefficients)
+
+  if (pedtools::hasInbredFounders(pedigree)){
+    .assert_persons_are_not_inbred_founders(pedigree, persons)
+
+    pr_v_constant <- -1
+    pr_v <- v_prior_with_f(pedigree, i)
+  }else{
+    pr_v_constant <- 2^(-(i$number_of_relevant_transmissions - length(i$relevant_masks)))
+    pr_v <- numeric()
+  }
 
   log10_likelihood <- sum(ibd_log10_pr_cpp(ibd_state_by_v = i$ibd_state_by_v,
                                             ibd_by_locus = ibd,
                                             recombination_rate_by_locus = recombination_rate_by_locus,
                                             number_of_transmissions = i$number_of_relevant_transmissions,
-                                            fixed_transmission_masks = i$relevant_masks))
+                                            fixed_transmission_masks = i$relevant_masks,
+                                           pr_v_constant = pr_v_constant,
+                                           pr_v_biased = pr_v))
 
   if (log10){
     return(log10_likelihood)

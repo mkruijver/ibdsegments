@@ -45,13 +45,23 @@ multi_ibd_patterns <- function(pedigree, ids = pedtools::leaves(pedigree),
   number_of_loci <- 1 + length(recombination_rate_by_locus)
 
   if (number_of_loci == 1){
-    pr_v <-  2^(-sum(!i$transmissions$is_fixed))
+
+    if (pedtools::hasInbredFounders(pedigree)){
+      .assert_persons_are_not_inbred_founders(pedigree, ids)
+
+      pr_v_constant <- -1
+      pr_v <- v_prior_with_f(pedigree, i)
+    }else{
+      pr_v_constant <- 2^(-(i$number_of_relevant_transmissions - length(i$relevant_masks)))
+      pr_v <- numeric()
+    }
 
     return(multi_ibd_patterns_by_v_df(m$unique_patterns, pattern_idx_by_v = m$pattern_idx_by_v,
-                                      ids = ids, pr_v = pr_v))
+                                      ids = ids, pr_v_constant = pr_v_constant, pr_v = pr_v))
   }
   else{
-    number_of_loci <- 2.
+    .assert_no_founder_inbreeding(pedigree,
+        "Founder inbreeding is not supported for calculations involving more than one locus")
 
     number_of_states <- max(m$pattern_idx_by_v)
 
@@ -62,7 +72,7 @@ multi_ibd_patterns <- function(pedigree, ids = pedtools::leaves(pedigree),
         10^sum(ibd_log10_pr_cpp(ibd_state_by_v = m$pattern_idx_by_v,
                              ibd_by_locus = multi_locus_m_idx,
                              recombination_rate_by_locus = recombination_rate_by_locus,
-                             number_of_transmissions = number_of_relevant_transmissions,
+                             number_of_transmissions = i$number_of_relevant_transmissions,
                              fixed_transmission_masks = i$relevant_masks))})
 
     return(multi_ibd_patterns_df(prob = prob, multi_locus_m_idx = multi_locus_m_idxs,

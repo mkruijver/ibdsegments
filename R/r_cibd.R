@@ -37,6 +37,7 @@ r_cibd <- function(n,
   coeff <- ibdsegments::: .validate_coefficients(coefficients)
   .check_persons_compatible_with_coeff(persons, coeff)
   .validate_obs_compatible_with_coeff(ibd_state, "ibd_state", coeff)
+  .validate_pedigree(pedigree, continuous_genome = TRUE)
 
   i <- inheritance_space(pedigree = pedigree, persons = persons,
                          coefficients = coefficients)

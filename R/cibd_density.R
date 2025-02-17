@@ -75,6 +75,7 @@ cibd_density <- function(cM = r_cibd_result$length,
   coeff <- .validate_coefficients(coefficients)
   .check_persons_compatible_with_coeff(persons, coeff)
   .validate_obs_compatible_with_coeff(ibd, "ibd", coeff)
+  .validate_pedigree(pedigree, continuous_genome = TRUE)
   .validate_logical(log10, "log10")
 
   i <- inheritance_space(pedigree = pedigree, persons = persons,

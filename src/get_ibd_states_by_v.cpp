@@ -478,7 +478,8 @@ List get_multi_ibd_patterns_by_v(int number_of_ped_members,
 DataFrame multi_ibd_patterns_by_v_df(IntegerMatrix unique_patterns,
                                      IntegerVector pattern_idx_by_v,
                                      CharacterVector ids,
-                                     double pr_v){
+                                     double pr_v_constant,
+                                     NumericVector pr_v){
 
   int number_of_ids = ids.size();
   int number_of_patterns = unique_patterns.ncol();
@@ -493,26 +494,54 @@ DataFrame multi_ibd_patterns_by_v_df(IntegerMatrix unique_patterns,
 
   // probability column
   col_names[0] = "Prob";
-  std::vector<long> count_by_pattern(number_of_patterns);
-  for (const auto pattern_idx: pattern_idx_by_v){
-    count_by_pattern[pattern_idx-1]++;
+
+  // if unless we have founder inbreeding, pr_v is uniform
+  Rcpp::NumericVector pr(number_of_patterns);
+  bool no_founder_inbreeding = pr_v_constant >= 0;
+
+  if (no_founder_inbreeding){
+    std::vector<long> count_by_pattern(number_of_patterns);
+    for (const auto pattern_idx: pattern_idx_by_v){
+      count_by_pattern[pattern_idx-1]++;
+    }
+
+    for (int i = 0; i < number_of_patterns; i++){
+      pr[i] = count_by_pattern[i] * pr_v_constant;
+    }
+  }
+  else{
+    // we deal with founder inbreeding by biasing the prior pr(v)
+    int number_of_v = pattern_idx_by_v.size();
+    for (int v = 0; v < number_of_v; v++){
+      pr[pattern_idx_by_v[v] - 1] += pr_v[v];
+    }
   }
 
-  Rcpp::NumericVector pr(number_of_patterns);
-  for (int i = 0; i < number_of_patterns; i++){
-    pr[i] = count_by_pattern[i] * pr_v;
+  // with fully inbred founders some rows are 0
+  NumericVector pr_positive;
+  if (no_founder_inbreeding){
+    result[0] = pr;
+    pr_positive = pr;
   }
-  result[0] = pr;
+  else{
+    pr_positive = pr[pr>0];
+    result[0] = pr_positive;
+  }
 
   // id columns
   for (int i = 0; i < number_of_ids; i++){
-    CharacterVector id_column(number_of_patterns);
+    CharacterVector id_column(pr_positive.size());
 
+    int i_row = 0;
     for (int i_pattern = 0; i_pattern < number_of_patterns; i_pattern++){
-      int a = unique_patterns(2*i, i_pattern);
-      int b = unique_patterns(2*i + 1, i_pattern);
 
-      id_column[i_pattern] = std::to_string(a) + " " + std::to_string(b);
+      if (no_founder_inbreeding || (pr[i_pattern] > 0)){
+        int a = unique_patterns(2*i, i_pattern);
+        int b = unique_patterns(2*i + 1, i_pattern);
+
+        id_column[i_row] = std::to_string(a) + " " + std::to_string(b);
+        i_row++;
+      }
     }
 
     result[1+i] = id_column;

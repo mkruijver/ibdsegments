@@ -16,7 +16,7 @@ ibd_pr(
 \arguments{
 \item{ibd}{Integer vector. Taking values 0, 1, 2 for \code{coefficients = "ibd"} or \code{coefficients = "kappa"}, 1, ..., 9 for \code{coefficients="identity"} and 1, ..., 15 for \code{coefficients = "detailed"}.}
 
-\item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.kappa}
+\item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
 \item{persons}{Persons for which IBD is observed. Defaults to \code{\link[pedtools:ped_subgroups]{pedtools::leaves}}\code{(pedigree)}.}
 

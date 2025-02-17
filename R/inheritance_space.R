@@ -22,6 +22,8 @@ inheritance_space <- function(pedigree, persons, coefficients = "ibd",
   if (length(transmissions_fixed_idx) == 0){
     fixed_transmission_masks <- integer()
   }
+  fixed_transmission_masks_from_person_idx <- transmissions$from_person_idx[transmissions_fixed_idx]
+
   transmissions$masks <- -1
   transmissions$masks[transmissions_fixed_idx] <- fixed_transmission_masks
 
@@ -35,6 +37,7 @@ inheritance_space <- function(pedigree, persons, coefficients = "ibd",
 
   i <- list(pedigree = pedigree,
             transmissions = transmissions,
+            symmetries = exploit_symmetries,
             fixed_transmission_masks = fixed_transmission_masks)
 
   # determine the IBD status for the persons of interest for each transmission vector
@@ -69,10 +72,13 @@ inheritance_space <- function(pedigree, persons, coefficients = "ibd",
   if (get_option_ignore_irrelevant_transmissions()){
     i$number_of_relevant_transmissions <- sum(!i$transmissions$is_ignorable)
     i$relevant_masks <- i$fixed_transmission_masks[i$fixed_transmission_masks > 0]
+    i$relevant_masks_from_person_idx <- fixed_transmission_masks_from_person_idx[i$fixed_transmission_masks > 0]
+
   }
   else{
     i$number_of_relevant_transmissions <- nrow(i$transmissions)
     i$relevant_masks <- i$fixed_transmission_masks
+    i$relevant_masks_from_person_idx <- fixed_transmission_masks_from_person_idx
   }
 
   class(i) <- "inheritance_space"
