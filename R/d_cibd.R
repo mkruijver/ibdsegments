@@ -1,6 +1,6 @@
 #' Probability density of continuously observed IBD segment lengths for pedigree members
 #'
-#' The `cibd_density` function computes the probability density of observed
+#' The `d_cibd` function computes the probability density of observed
 #' IBD segments on a chromosome.
 #'
 #' @param cM Numeric vector with lengths of segments (centiMorgan).
@@ -15,25 +15,25 @@
 #' ped_fs <- pedtools::nuclearPed(nch = 2)
 #'
 #' # probability that full siblings are double IBD (kappa2)
-#' cibd_density(cM = 0, ibd = 2, ped_fs)
+#' d_cibd(cM = 0, ibd = 2, ped_fs)
 #'
 #' # full siblings are double IBD and remain so for 100 cM
-#' cibd_density(cM = 100, ibd = 2, ped_fs)
+#' d_cibd(cM = 100, ibd = 2, ped_fs)
 #'
 #' # full siblings are double IBD for 50 cM,
 #' # then single IBD for 50 cM
-#' cibd_density(cM = c(50, 50), ibd = c(2, 1), ped_fs)
+#' d_cibd(cM = c(50, 50), ibd = c(2, 1), ped_fs)
 #'
 #' # full siblings are double IBD, remain so for 100 cM
 #' # and no longer
-#' cibd_density(cM = c(100, 0), ibd = c(2, 1), ped_fs)
+#' d_cibd(cM = c(100, 0), ibd = c(2, 1), ped_fs)
 #'
 #' ## probability density of IBD segment length for first cousins on an infinite chromosome
 #' ped_fc <- pedtools::cousinPed()
 #' # first compute the probability of IBD
-#' k1_fc <- ibd_pr(ibd = 1, ped_fc)
+#' k1_fc <- d_ibd(ibd = 1, ped_fc)
 #' # density of segment length
-#' f <- Vectorize(function(x) cibd_density(cM = c(x,0), ibd = c(1, 0), ped_fc) / k1_fc)
+#' f <- Vectorize(function(x) d_cibd(cM = c(x,0), ibd = c(1, 0), ped_fc) / k1_fc)
 #'
 #' curve(f, 0, 300)
 #'
@@ -43,7 +43,7 @@
 #' # for full siblings, how does the chance of remaining double IBD
 #' # depend on the segment length?
 #' cM <- seq(from = 0, to = 100, length = 200)
-#' pr_2ibd <- sapply(cM, cibd_density, 2, ped_fs) / ibd_pr(2, ped_fs)
+#' pr_2ibd <- sapply(cM, d_cibd, 2, ped_fs) / d_ibd(2, ped_fs)
 #'
 #' plot(cM, pr_2ibd, type="l")
 #'
@@ -58,13 +58,13 @@
 #'
 #' r_c1 <- r_cibd(n = 1e2, pedigree = ped_c1)
 #'
-#' lr <- cibd_density(r_cibd_result = r_c1, pedigree = ped_c1)/
-#'   cibd_density(r_cibd_result = r_c1, pedigree = ped_c2)
+#' lr <- d_cibd(r_cibd_result = r_c1, pedigree = ped_c1)/
+#'   d_cibd(r_cibd_result = r_c1, pedigree = ped_c2)
 #'
 #' hist(log10(lr))
 #
 #' @export
-cibd_density <- function(cM = r_cibd_result$length,
+d_cibd <- function(cM = r_cibd_result$length,
                          ibd = r_cibd_result$state,
                          pedigree, persons = pedtools::leaves(pedigree),
                          r_cibd_result,

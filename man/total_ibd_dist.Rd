@@ -60,9 +60,9 @@ ped_av <- pedtools::avuncularPed()
 ped_hs <- pedtools::halfSibPed()
 
 stopifnot(all.equal(1/2,
-          ibd_pr(1, ped_av),
-          ibd_pr(1, ped_hs),
-          ibd_pr(1, ped_gp, persons = c(1,5))))
+          d_ibd(1, ped_av),
+          d_ibd(1, ped_hs),
+          d_ibd(1, ped_gp, persons = c(1,5))))
 
 # Compute IBD distributions
 d_av <- total_ibd_dist(ped_av)

@@ -12,7 +12,7 @@ compute_single_locus_relatedness_coefficients <- function(pedigree,
   values <- coefficient_range[[coefficient]]
 
   setNames(sapply(values, function(x){
-    ibd_pr(ibd = x, pedigree = pedigree, persons = persons,
+    d_ibd(ibd = x, pedigree = pedigree, persons = persons,
            coefficients = coefficient)
   }),
   nm = paste0(coefficient_short_label[[coefficient]], values))
@@ -33,7 +33,7 @@ compute_two_locus_relatedness_coefficients <- function(pedigree, recombination_r
 
   for (i1 in seq_along(values)){
     for (i2 in seq_along(values)){
-      probabilities[i1, i2] <-  ibd_pr(c(values[i1], values[i2]),
+      probabilities[i1, i2] <-  d_ibd(c(values[i1], values[i2]),
                                        recombination_rate_by_locus = recombination_rate,
                                        pedigree = pedigree, persons = persons, coefficient = coefficient)
     }
