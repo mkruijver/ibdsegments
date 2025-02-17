@@ -27,6 +27,14 @@
 #' m2
 #'
 #' stopifnot(all.equal(m, m2))
+#'
+#' # Expectation and variance of _fraction_ of the genome that is
+#' # double IBD between four full siblings
+#' m4 <- total_ibd_dist_moments(pedigree = pedtools::nuclearPed(nch = 4),
+#' ibd_state = 2, chromosome_length = 100, fraction = TRUE)
+#' m4
+#'
+#' stopifnot(all.equal(0.25^3, m4$mean))
 #' @export
 total_ibd_dist_moments <- function(pedigree,
                                      persons = pedtools::leaves(pedigree),
