@@ -50,35 +50,61 @@ common_peds <- list(pedtools::nuclearPed(nch = 2),
 
 test_that("verify single locus kappa's against ribd", {
 
-  for (ped in common_peds){
-    expected <- ribd::identityCoefs(ped, ids = pedtools::leaves(ped))[9:7]
-    observed <- compute_single_locus_relatedness_coefficients(
-      pedigree = ped, coefficient = "kappa")
+  for (founder_inbreeding in c(FALSE, TRUE)){
+    for (ped in common_peds){
 
-    expect_equal(unname(observed), expected)
+      if (founder_inbreeding){
+        founders <- pedtools::founders(ped)
+        ped <- pedtools::setFounderInbreeding(ped, founders,
+                                              value = runif(n = length(founders)))
+      }
+
+      expected <- ribd::identityCoefs(ped, ids = pedtools::leaves(ped))[9:7]
+      observed <- compute_single_locus_relatedness_coefficients(
+        pedigree = ped, coefficient = "kappa")
+
+      expect_equal(unname(observed), expected)
+    }
   }
 })
 
 
 test_that("verify single locus Jacquard coefficients against ribd", {
 
-  for (ped in common_peds){
-    expected <- ribd::identityCoefs(ped, ids = pedtools::leaves(ped))[1:9]
-    observed <- compute_single_locus_relatedness_coefficients(
-      pedigree = ped, coefficient = "identity")
+  for (founder_inbreeding in c(FALSE, TRUE)){
+    for (ped in common_peds){
+      if (founder_inbreeding){
+        founders <- pedtools::founders(ped)
+        ped <- pedtools::setFounderInbreeding(ped, founders,
+                                              value = runif(n = length(founders)))
+      }
 
-    expect_equal(observed, expected, ignore_attr = TRUE)
+      expected <- ribd::identityCoefs(ped, ids = pedtools::leaves(ped))[1:9]
+      observed <- compute_single_locus_relatedness_coefficients(
+        pedigree = ped, coefficient = "identity")
+
+      expect_equal(observed, expected, ignore_attr = TRUE)
+    }
   }
 })
 
+
 test_that("verify single locus detailed Jacquard coefficients against ribd", {
 
-  for (ped in common_peds){
-    expected <- ribd::identityCoefs(ped, ids = pedtools::leaves(ped), detailed = TRUE)
-    observed <- compute_single_locus_relatedness_coefficients(
-      pedigree = ped, coefficient = "detailed")
+  for (founder_inbreeding in c(FALSE, TRUE)){
+    for (ped in common_peds){
+      if (founder_inbreeding){
+        founders <- pedtools::founders(ped)
+        ped <- pedtools::setFounderInbreeding(ped, founders,
+                                              value = runif(n = length(founders)))
+      }
 
-    expect_equal(observed, expected, ignore_attr = TRUE)
+      expected <- ribd::identityCoefs(ped, ids = pedtools::leaves(ped), detailed = TRUE)
+      observed <- compute_single_locus_relatedness_coefficients(
+        pedigree = ped, coefficient = "detailed")
+
+      expect_equal(observed, expected, ignore_attr = TRUE)
+    }
   }
 })
 
