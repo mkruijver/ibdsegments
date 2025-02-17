@@ -163,6 +163,53 @@ d.ibd_dist <- function(x){
 }
 
 #' @export
+E <- function(x, ...){
+  UseMethod("E")
+}
+
+#' @export
+E.ibd_dist <- function(x, m = 1){
+
+  E_mixed <- 0.
+
+  w <- x$weight_continuous
+  if (w > 0){
+    f <- d(x)
+
+    E_continuous <- integrate(function(x) (x^m) * f(x),
+                              lower = x$low, upper = x$up)$val
+    E_mixed <- E_mixed + E_continuous * w
+  }
+
+  if ((!is.null(x$point_mass)) && (nrow(x$point_mass) > 0)){
+    E_discrete <- sum(x$point_mass$x^m * x$point_mass$px)
+    E_mixed <- E_mixed + E_discrete
+  }
+
+  E_mixed
+}
+
+#' @export
+var <- function(x, ...){
+  UseMethod("var")
+}
+
+#' @export
+var.ibd_dist <- function(x){
+  E.ibd_dist(x, m = 2) - E.ibd_dist(x)^2
+}
+
+#' @export
+sd <- function(x, ...){
+  UseMethod("sd")
+}
+
+#' @export
+sd.ibd_dist <- function(x){
+  sqrt(var.ibd_dist(x))
+}
+
+#' @export
 print.ibd_dist = function(x, ...) {
   cat("Probability distribution of",
       if (x$fraction) "fraction" else "total length",
