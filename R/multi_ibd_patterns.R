@@ -68,12 +68,16 @@ multi_ibd_patterns <- function(pedigree, ids = pedtools::leaves(pedigree),
     multi_locus_m_idxs <- as.matrix(rev(do.call(expand.grid,
       replicate(n = number_of_loci, seq_len(number_of_states), simplify = FALSE))))
 
+    pr_v_constant <- 2^(-(i$number_of_relevant_transmissions - length(i$relevant_masks)))
+
     prob <- apply(multi_locus_m_idxs, 1, function(multi_locus_m_idx){
         10^sum(ibd_log10_pr_cpp(ibd_state_by_v = m$pattern_idx_by_v,
                              ibd_by_locus = multi_locus_m_idx,
                              recombination_rate_by_locus = recombination_rate_by_locus,
                              number_of_transmissions = i$number_of_relevant_transmissions,
-                             fixed_transmission_masks = i$relevant_masks))})
+                             fixed_transmission_masks = i$relevant_masks,
+                             pr_v_constant,
+                             numeric()))})
 
     return(multi_ibd_patterns_df(prob = prob, multi_locus_m_idx = multi_locus_m_idxs,
                           unique_patterns = m$unique_patterns, ids = ids))
