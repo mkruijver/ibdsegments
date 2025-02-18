@@ -210,6 +210,71 @@ sd.ibd_dist <- function(x){
 }
 
 #' @export
+plot.ibd_dist <- function(x, min_point_mass = 1e-9, ...){
+
+  # blitz tiny point masses
+  if (!is.null(x$point_mass)){
+    x$point_mass <- x$point_mass[x$point_mass$px > min_point_mass,]
+  }
+
+  args_list <- list(...)
+
+  if (is.null(args_list$xlim)){
+    xlim <- c(min(x$low, x$point_mass$x),
+              max(x$up,  x$point_mass$x))
+  }
+  if (is.null(args_list$n)){
+    n <- 200
+  }
+
+  w <- x$weight_continuous
+  has_continuous_part <- w > 0
+  has_discrete_part <- (!is.null(x$point_mass)) && (nrow(x$point_mass) > 0)
+
+  if ((!has_continuous_part) && (!has_discrete_part)){
+    stop("distribution has neither a continuous nor a discrete part")
+  }
+
+  original_mar <- par("mar")
+  if (has_continuous_part && has_discrete_part){
+
+    # make space for the second y-axis
+    par(mar = c(5, 4, 4, 5))
+  }
+
+
+  if (has_continuous_part){
+    f <- d(x)
+    curve(f, from = x$low, to = x$up, n = n, xlim = xlim, ...)
+    grid()
+  }
+
+  if (has_continuous_part && has_discrete_part){
+    # add second axis
+    par(new = TRUE)
+
+    # add point massses
+    plot(x$point_mass$x, x$point_mass$px,
+        xlim = xlim,
+         type = "h", lty=2,
+         axes = FALSE, xlab="", ylab="")
+    points(x$point_mass$x, x$point_mass$px)
+
+    axis(4)
+    mtext("p(x)", side = 4, line = 3)
+
+  }else if (has_discrete_part){
+
+    plot(x$point_mass$x, x$point_mass$px,
+         type = "h", ylab="p(x)", lty=2, ...)
+
+    points(x$point_mass$x, x$point_mass$px)
+  }
+
+  par(mar = original_mar)
+}
+
+#' @export
 print.ibd_dist = function(x, ...) {
   cat("Probability distribution of",
       if (x$fraction) "fraction" else "total length",
