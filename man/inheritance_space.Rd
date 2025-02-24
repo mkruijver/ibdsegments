@@ -12,5 +12,5 @@ inheritance_space(
 )
 }
 \description{
-The \code{inheritance_space} function determines the IBD vectors for a pedigree.
+The \code{inheritance_space} function determines the space of IBD vectors for a pedigree.
 }

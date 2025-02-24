@@ -1,6 +1,6 @@
 #' Inheritance space for pedigree
 #'
-#' The `inheritance_space` function determines the IBD vectors for a pedigree.
+#' The `inheritance_space` function determines the space of IBD vectors for a pedigree.
 #'
 #' @export
 inheritance_space <- function(pedigree, ids, coefficients = "ibd",
@@ -84,3 +84,28 @@ inheritance_space <- function(pedigree, ids, coefficients = "ibd",
   class(i) <- "inheritance_space"
   i
 }
+
+
+#' @export
+print.inheritance_space <- function(x){
+  number_of_pedigree_members <- length(x$pedigree$ID)
+  number_of_pedigree_founders <- sum(x$pedigree$FIDX==0)
+  number_of_pedigree_non_founders <- number_of_pedigree_members - number_of_pedigree_founders
+
+  cat("Inheritance space for pedigree of size", number_of_pedigree_members,
+      "with",number_of_pedigree_founders, "founder(s) and",
+      number_of_pedigree_non_founders, "non-founder(s)\n")
+
+  number_of_ibd_vectors <- 4^number_of_pedigree_non_founders
+
+  cat("# IBD vectors including symmetries:", number_of_ibd_vectors, "\n")
+
+  number_of_transmissions <- nrow(x$transmissions)
+  number_of_fixed_transmissions <- length(x$fixed_transmission_masks)
+  number_of_active_transmissions <- number_of_transmissions - number_of_fixed_transmissions
+  number_of_ibd_vectors_considered <- 2^number_of_active_transmissions
+
+  cat("# canonical IBD vectors:", number_of_ibd_vectors_considered, "\n")
+}
+
+
