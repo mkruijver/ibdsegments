@@ -5,7 +5,7 @@
 #' over one autosome. The function uses double numerical integration.
 #'
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
-#' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
+#' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
 #' @param fraction If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.
 #' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
@@ -37,7 +37,7 @@
 #' stopifnot(all.equal(0.25^3, m4$mean))
 #' @export
 total_ibd_dist_moments <- function(pedigree,
-                                     persons = pedtools::leaves(pedigree),
+                                     ids = pedtools::leaves(pedigree),
                                      fraction = FALSE,
                                      coefficients = "ibd",
                                      ibd_state = 1L,
@@ -57,11 +57,11 @@ total_ibd_dist_moments <- function(pedigree,
 
 
   coeff <- .validate_coefficients(coefficients)
-  .check_persons_compatible_with_coeff(persons, coeff)
+  .check_ids_compatible_with_coeff(ids, coeff)
   .validate_obs_compatible_with_coeff(ibd_state, "ibd_state", coeff)
   .validate_pedigree(pedigree, continuous_genome = TRUE)
 
-  i <- inheritance_space(pedigree = pedigree, persons = persons,
+  i <- inheritance_space(pedigree = pedigree, ids = ids,
                          coefficients = coefficients)
 
 

@@ -2,7 +2,7 @@
 % Please edit documentation in R/multi_ibd_patterns.R
 \name{multi_ibd_patterns}
 \alias{multi_ibd_patterns}
-\title{Compute probabilities of minimal multi-person IBD patterns}
+\title{Compute probabilities of minimal multi-id IBD patterns}
 \usage{
 multi_ibd_patterns(
   pedigree,

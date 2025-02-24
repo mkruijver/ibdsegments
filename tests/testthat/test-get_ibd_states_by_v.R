@@ -40,7 +40,7 @@ test_that("compare to manual values for kappa", {
   expect_equal(get_kappa_state(c(1,2,3,4), 1, 2), 0)
 
 })
-test_that("compare to manual values for multi-person ibd", {
+test_that("compare to manual values for multi-id ibd", {
 
   expect_equal(get_joint_ibd_state(c(1,1,1,1,1,1), 1:3), 2)
 

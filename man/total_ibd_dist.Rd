@@ -6,7 +6,7 @@
 \usage{
 total_ibd_dist(
   pedigree,
-  persons = pedtools::leaves(pedigree),
+  ids = pedtools::leaves(pedigree),
   fraction = FALSE,
   coefficients = "ibd",
   ibd_state = 1L,
@@ -17,7 +17,7 @@ total_ibd_dist(
 \arguments{
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
-\item{persons}{Persons for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
+\item{ids}{Ids for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
 
 \item{fraction}{If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.}
 
@@ -62,12 +62,12 @@ ped_hs <- pedtools::halfSibPed()
 stopifnot(all.equal(1/2,
           d_ibd(1, ped_av),
           d_ibd(1, ped_hs),
-          d_ibd(1, ped_gp, persons = c(1,5))))
+          d_ibd(1, ped_gp, ids = c(1,5))))
 
 # Compute IBD distributions
 d_av <- total_ibd_dist(ped_av)
 d_hs <- total_ibd_dist(ped_hs)
-d_gp <- total_ibd_dist(ped_gp, persons = c(1,5))
+d_gp <- total_ibd_dist(ped_gp, ids = c(1,5))
 
 # the point masses are different
 d_av

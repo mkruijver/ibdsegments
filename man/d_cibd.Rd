@@ -8,7 +8,7 @@ d_cibd(
   cM = r_cibd_result$length,
   ibd = r_cibd_result$state,
   pedigree,
-  persons = pedtools::leaves(pedigree),
+  ids = pedtools::leaves(pedigree),
   r_cibd_result,
   coefficients = "ibd",
   log10 = FALSE
@@ -21,7 +21,7 @@ d_cibd(
 
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
-\item{persons}{Persons for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
+\item{ids}{Ids for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
 
 \item{r_cibd_result}{Optionally a result from \code{\link{r_cibd}} for which the probability density is evaluated.}
 

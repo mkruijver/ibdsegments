@@ -7,19 +7,19 @@ coefficient_short_label <- list(kappa = "k",
                                 detailed = "d")
 
 compute_single_locus_relatedness_coefficients <- function(pedigree,
-                                                          persons = pedtools::leaves(pedigree),
+                                                          ids = pedtools::leaves(pedigree),
                                                           coefficient){
   values <- coefficient_range[[coefficient]]
 
   setNames(sapply(values, function(x){
-    d_ibd(ibd = x, pedigree = pedigree, persons = persons,
+    d_ibd(ibd = x, pedigree = pedigree, ids = ids,
            coefficients = coefficient)
   }),
   nm = paste0(coefficient_short_label[[coefficient]], values))
 }
 
 compute_two_locus_relatedness_coefficients <- function(pedigree, recombination_rate,
-                                                       persons = pedtools::leaves(pedigree),
+                                                       ids = pedtools::leaves(pedigree),
                                                        coefficient){
 
 
@@ -35,7 +35,7 @@ compute_two_locus_relatedness_coefficients <- function(pedigree, recombination_r
     for (i2 in seq_along(values)){
       probabilities[i1, i2] <-  d_ibd(c(values[i1], values[i2]),
                                        recombination_rate_by_locus = recombination_rate,
-                                       pedigree = pedigree, persons = persons, coefficient = coefficient)
+                                       pedigree = pedigree, ids = ids, coefficient = coefficient)
     }
   }
 
@@ -111,11 +111,11 @@ test_that("verify single locus detailed Jacquard coefficients against ribd", {
 test_that("verify two locus kappa's against ribd::twoLocusIBD", {
 
   for (ped in common_peds){
-    persons <- pedtools::leaves(ped)
+    ids <- pedtools::leaves(ped)
 
-    expected <- ribd::twoLocusIBD(ped, ids = persons, rho = 0.1)
+    expected <- ribd::twoLocusIBD(ped, ids = ids, rho = 0.1)
     observed <- compute_two_locus_relatedness_coefficients(ped, recombination_rate = 0.1,
-                                                           persons = persons, coefficient = "kappa")
+                                                           ids = ids, coefficient = "kappa")
 
     expect_equal(observed, expected, ignore_attr = TRUE)
   }
@@ -124,12 +124,12 @@ test_that("verify two locus kappa's against ribd::twoLocusIBD", {
 
 test_that("verify two locus Jacquard against ribd::twoLocusIdentity", {
   for (ped in common_peds){
-    persons <- pedtools::leaves(ped)
+    ids <- pedtools::leaves(ped)
 
     expected <- ribd::twoLocusIdentity(ped, ids = pedtools::leaves(ped),
                                        rho = 0.01)
     observed <- compute_two_locus_relatedness_coefficients(ped,
-                                                           recombination_rate = 0.01, persons = persons,
+                                                           recombination_rate = 0.01, ids = ids,
                                                            coefficient = "identity")
 
     expect_equal(observed, expected)
@@ -139,12 +139,12 @@ test_that("verify two locus Jacquard against ribd::twoLocusIdentity", {
 ## this is not (yet?) implemented in ribd
 # test_that("verify two locus detailed Jacquard against ribd::twoLocusIdentity", {
 #   for (ped in common_peds){
-#     persons <- pedtools::leaves(ped)
+#     ids <- pedtools::leaves(ped)
 #
 #     expected <- ribd::twoLocusIdentity(ped, ids = pedtools::leaves(ped),
 #                                        rho = 0.01, detailed = TRUE)
 #     observed <- compute_two_locus_relatedness_coefficients(ped,
-#                     recombination_rate = 0.01, persons = persons,
+#                     recombination_rate = 0.01, ids = ids,
 #                     coefficient = "detailed")
 #
 #     expect_equal(observed, expected)

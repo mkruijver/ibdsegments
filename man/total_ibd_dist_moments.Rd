@@ -6,7 +6,7 @@
 \usage{
 total_ibd_dist_moments(
   pedigree,
-  persons = pedtools::leaves(pedigree),
+  ids = pedtools::leaves(pedigree),
   fraction = FALSE,
   coefficients = "ibd",
   ibd_state = 1L,
@@ -16,7 +16,7 @@ total_ibd_dist_moments(
 \arguments{
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
-\item{persons}{Persons for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
+\item{ids}{Ids for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
 
 \item{fraction}{If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.}
 

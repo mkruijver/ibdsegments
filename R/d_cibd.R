@@ -7,7 +7,7 @@
 #' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "ibd"` or `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
 #' @param r_cibd_result Optionally a result from [`r_cibd`] for which the probability density is evaluated.
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
-#' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
+#' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
 #' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param log10 Should the log10 probability density be returned? Default is `FALSE`.
 #' @return Numeric
@@ -66,19 +66,19 @@
 #' @export
 d_cibd <- function(cM = r_cibd_result$length,
                          ibd = r_cibd_result$state,
-                         pedigree, persons = pedtools::leaves(pedigree),
+                         pedigree, ids = pedtools::leaves(pedigree),
                          r_cibd_result,
                          coefficients = "ibd",
                          log10 = FALSE){
 
   # validate inputs
   coeff <- .validate_coefficients(coefficients)
-  .check_persons_compatible_with_coeff(persons, coeff)
+  .check_ids_compatible_with_coeff(ids, coeff)
   .validate_obs_compatible_with_coeff(ibd, "ibd", coeff)
   .validate_pedigree(pedigree, continuous_genome = TRUE)
   .validate_logical(log10, "log10")
 
-  i <- inheritance_space(pedigree = pedigree, persons = persons,
+  i <- inheritance_space(pedigree = pedigree, ids = ids,
                          coefficients = coefficients)
 
   if (missing(r_cibd_result)){

@@ -7,7 +7,7 @@
 d_ibd(
   ibd,
   pedigree,
-  persons = pedtools::leaves(pedigree),
+  ids = pedtools::leaves(pedigree),
   recombination_rate_by_locus = numeric(),
   coefficients = "ibd",
   log10 = FALSE
@@ -18,7 +18,7 @@ d_ibd(
 
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
-\item{persons}{Persons for which IBD is observed. Defaults to \code{\link[pedtools:ped_subgroups]{pedtools::leaves}}\code{(pedigree)}.}
+\item{ids}{Ids for which IBD is observed. Defaults to \code{\link[pedtools:ped_subgroups]{pedtools::leaves}}\code{(pedigree)}.}
 
 \item{recombination_rate_by_locus}{Numeric vector with length one shorter than \code{ibd}.}
 

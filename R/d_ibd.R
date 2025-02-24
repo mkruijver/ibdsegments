@@ -5,7 +5,7 @@
 #'
 #' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "ibd"` or `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
-#' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`]`(pedigree)`.
+#' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`]`(pedigree)`.
 #' @param recombination_rate_by_locus Numeric vector with length one shorter than `ibd`.
 #' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param log10 Should the log10 likelihood be returned? Default is `FALSE`.
@@ -36,13 +36,13 @@
 #' sapply(1:15, d_ibd, pedigree = ped_fs_mating, coefficients = "detailed")
 #' @export
 d_ibd <- function(ibd,
-                   pedigree, persons = pedtools::leaves(pedigree),
+                   pedigree, ids = pedtools::leaves(pedigree),
                    recombination_rate_by_locus = numeric(),
                    coefficients = "ibd",
                    log10 = FALSE){
 
   coeff <- .validate_coefficients(coefficients)
-  .check_persons_compatible_with_coeff(persons, coeff)
+  .check_ids_compatible_with_coeff(ids, coeff)
   .validate_obs_compatible_with_coeff(ibd, "ibd", coeff)
   validate_recombination_rates_cpp(recombination_rate_by_locus)
   .validate_recombination_rates_compatible_with_obs(ibd,
@@ -55,11 +55,11 @@ d_ibd <- function(ibd,
   }
 
 
-  i <- inheritance_space(pedigree = pedigree, persons = persons,
+  i <- inheritance_space(pedigree = pedigree, ids = ids,
                          coefficients = coefficients)
 
   if (pedtools::hasInbredFounders(pedigree)){
-    .assert_persons_are_not_inbred_founders(pedigree, persons)
+    .assert_ids_are_not_inbred_founders(pedigree, ids)
 
     pr_v_constant <- -1
     pr_v <- v_prior_with_f(pedigree, i)

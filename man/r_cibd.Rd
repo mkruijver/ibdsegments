@@ -7,7 +7,7 @@
 r_cibd(
   n,
   pedigree,
-  persons = pedtools::leaves(pedigree),
+  ids = pedtools::leaves(pedigree),
   coefficients = "ibd",
   ibd_state = 1L,
   chromosome_length = 267.77
@@ -18,7 +18,7 @@ r_cibd(
 
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
-\item{persons}{Persons for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
+\item{ids}{Ids for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
 
 \item{coefficients}{One of \verb{"ibd} (default), \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
 
@@ -41,7 +41,7 @@ head(r_hs$samples)
 head(r_hs$stats)
 
 ## Comparing half siblings and grandparent-grandchild
-r_gp <- r_cibd(n = 1e4, pedigree = pedtools::linearPed(2), persons = c(1, 5),
+r_gp <- r_cibd(n = 1e4, pedigree = pedtools::linearPed(2), ids = c(1, 5),
                chromosome_length = 300)
 
 hist(r_gp$stats$total_length)

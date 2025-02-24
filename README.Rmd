@@ -44,10 +44,10 @@ Besides `kappa`, other identity coefficients supported include:
 * `identity`: Jacquard's 9 condensed identity coefficients 
 * `detailed`: the 15 detailed identity coefficients
 
-For example, the inbreeding coefficient may be computed as an `ibd` state for a single person.
+For example, the inbreeding coefficient may be computed as an `ibd` state for a single pedigree member.
 ```{r}
 ped_inbred <- pedtools::fullSibMating(n = 1)
-d_ibd(ibd = 1, pedigree = ped_inbred, persons = 5, coefficients = "ibd")
+d_ibd(ibd = 1, pedigree = ped_inbred, ids = 5, coefficients = "ibd")
 ```
 The probability that three siblings are jointly double ibd is also easily computed using the `d_ibd` function.
 ```{r}

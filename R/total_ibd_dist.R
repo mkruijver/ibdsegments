@@ -16,7 +16,7 @@
 #' for details and finer control.
 #'
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
-#' @param persons Persons for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
+#' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
 #' @param fraction If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.
 #' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
@@ -36,12 +36,12 @@
 #' stopifnot(all.equal(1/2,
 #'           d_ibd(1, ped_av),
 #'           d_ibd(1, ped_hs),
-#'           d_ibd(1, ped_gp, persons = c(1,5))))
+#'           d_ibd(1, ped_gp, ids = c(1,5))))
 #'
 #' # Compute IBD distributions
 #' d_av <- total_ibd_dist(ped_av)
 #' d_hs <- total_ibd_dist(ped_hs)
-#' d_gp <- total_ibd_dist(ped_gp, persons = c(1,5))
+#' d_gp <- total_ibd_dist(ped_gp, ids = c(1,5))
 #'
 #' # the point masses are different
 #' d_av
@@ -59,7 +59,7 @@
 #' ggplot(df, aes(x = cM, y = y, color = Relationship)) + geom_line()
 #' @export
 total_ibd_dist <- function(pedigree,
-                     persons = pedtools::leaves(pedigree),
+                     ids = pedtools::leaves(pedigree),
                      fraction = FALSE,
                      coefficients = "ibd",
                      ibd_state = 1L,
@@ -76,11 +76,11 @@ total_ibd_dist <- function(pedigree,
   }
 
   coeff <- .validate_coefficients(coefficients)
-  .check_persons_compatible_with_coeff(persons, coeff)
+  .check_ids_compatible_with_coeff(ids, coeff)
   .validate_obs_compatible_with_coeff(ibd_state, "ibd_state", coeff)
   .validate_pedigree(pedigree, continuous_genome = TRUE)
 
-  i <- inheritance_space(pedigree = pedigree, persons = persons,
+  i <- inheritance_space(pedigree = pedigree, ids = ids,
                          coefficients = coefficients)
 
   lambda_max <- 0.01 * max(chromosome_length) * i$number_of_relevant_transmissions

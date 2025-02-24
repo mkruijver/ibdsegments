@@ -10,7 +10,7 @@ list_pedigree_transmissions <- function(pedigree,
   ped_row_is_founder_idx <- which(ped_row_is_founder)
 
   ped_non_founder_row_idx <- which(ped_row_is_non_founder)
-  to_person_idx <-  rep(ped_non_founder_row_idx, each = 2)
+  to_id_idx <-  rep(ped_non_founder_row_idx, each = 2)
 
   ped_non_founder_fidx <- pedigree$FIDX[ped_non_founder_row_idx]
   ped_non_founder_midx <- pedigree$MIDX[ped_non_founder_row_idx]
@@ -20,21 +20,21 @@ list_pedigree_transmissions <- function(pedigree,
   father_idx <- rep(ped_non_founder_fidx, each = 2)
   mother_idx <- rep(ped_non_founder_midx, each = 2)
 
-  from_person_idx <- ifelse(allele == 1L, father_idx, mother_idx)
+  from_id_idx <- ifelse(allele == 1L, father_idx, mother_idx)
 
-  from_allele_idx <- 2 * from_person_idx - 1
+  from_allele_idx <- 2 * from_id_idx - 1
 
-  to_allele_idx <- 2 * to_person_idx - 2 + allele
+  to_allele_idx <- 2 * to_id_idx - 2 + allele
 
   # founder symmetry: fix first transmissions for founders
   is_fixed <- rep(FALSE, length(father_idx))
 
   if (exploit_symmetries){
-    is_fixed[ match(ped_row_is_founder_idx, table = from_person_idx)] <- TRUE
+    is_fixed[ match(ped_row_is_founder_idx, table = from_id_idx)] <- TRUE
   }
 
-  transmissions <- data.frame(to_person_idx = to_person_idx,
-                              from_person_idx = from_person_idx,
+  transmissions <- data.frame(to_id_idx = to_id_idx,
+                              from_id_idx = from_id_idx,
                               father_idx = father_idx,
                               mother_idx = mother_idx,
                               allele = allele,

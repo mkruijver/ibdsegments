@@ -3,7 +3,7 @@
 #' The `inheritance_space` function determines the IBD vectors for a pedigree.
 #'
 #' @export
-inheritance_space <- function(pedigree, persons, coefficients = "ibd",
+inheritance_space <- function(pedigree, ids, coefficients = "ibd",
                               exploit_symmetries = TRUE){
 
   .validate_pedigree(pedigree)
@@ -16,13 +16,13 @@ inheritance_space <- function(pedigree, persons, coefficients = "ibd",
   transmissions_fixed_idx <- which(transmissions$is_fixed)
 
   fixed_transmission_masks <- sapply(transmissions_fixed_idx, function(i)
-    to_mask(which(transmissions$from_person_idx == transmissions$from_person_idx[i] &
+    to_mask(which(transmissions$from_id_idx == transmissions$from_id_idx[i] &
                     !transmissions$is_fixed) - 1)
   )
   if (length(transmissions_fixed_idx) == 0){
     fixed_transmission_masks <- integer()
   }
-  fixed_transmission_masks_from_person_idx <- transmissions$from_person_idx[transmissions_fixed_idx]
+  fixed_transmission_masks_from_id_idx <- transmissions$from_id_idx[transmissions_fixed_idx]
 
   transmissions$masks <- -1
   transmissions$masks[transmissions_fixed_idx] <- fixed_transmission_masks
@@ -40,19 +40,19 @@ inheritance_space <- function(pedigree, persons, coefficients = "ibd",
             symmetries = exploit_symmetries,
             fixed_transmission_masks = fixed_transmission_masks)
 
-  # determine the IBD status for the persons of interest for each transmission vector
-  if (!missing(persons)){
-    persons_idx <- match(persons, pedigree$ID)
-    if (anyNA(persons_idx)) {
-      stop("Person(s) ",
-           paste(c( persons[is.na(persons_idx)]), collapse = ", "),
+  # determine the IBD status for the ids of interest for each transmission vector
+  if (!missing(ids)){
+    ids_idx <- match(ids, pedigree$ID)
+    if (anyNA(ids_idx)) {
+      stop("Id(s) ",
+           paste(c( ids[is.na(ids_idx)]), collapse = ", "),
            , " not found in pedigree")
     }
 
-    i$persons <- persons
-    i$persons_idx <- persons_idx
+    i$ids <- ids
+    i$ids_idx <- ids_idx
 
-    if (length(persons) > 0){
+    if (length(ids) > 0){
       i$coefficients <- coefficients
       coeff <- .validate_coefficients(coefficients)
 
@@ -60,7 +60,7 @@ inheritance_space <- function(pedigree, persons, coefficients = "ibd",
                                             ped_row_is_founder_idx = which(pedigree$FIDX == 0),
                                             from_allele_idx = transmissions$from_allele_idx,
                                             to_allele_idx = transmissions$to_allele_idx,
-                                            persons_idx = persons_idx,
+                                            ids_idx = ids_idx,
                                             number_of_fixed_transmissions = sum(transmissions$is_fixed),
                                             top_to_bottom_order = transmissions$top_to_bottom_order,
                                             coeff = coeff)
@@ -72,13 +72,13 @@ inheritance_space <- function(pedigree, persons, coefficients = "ibd",
   if (get_option_ignore_irrelevant_transmissions()){
     i$number_of_relevant_transmissions <- sum(!i$transmissions$is_ignorable)
     i$relevant_masks <- i$fixed_transmission_masks[i$fixed_transmission_masks > 0]
-    i$relevant_masks_from_person_idx <- fixed_transmission_masks_from_person_idx[i$fixed_transmission_masks > 0]
+    i$relevant_masks_from_id_idx <- fixed_transmission_masks_from_id_idx[i$fixed_transmission_masks > 0]
 
   }
   else{
     i$number_of_relevant_transmissions <- nrow(i$transmissions)
     i$relevant_masks <- i$fixed_transmission_masks
-    i$relevant_masks_from_person_idx <- fixed_transmission_masks_from_person_idx
+    i$relevant_masks_from_id_idx <- fixed_transmission_masks_from_id_idx
   }
 
   class(i) <- "inheritance_space"

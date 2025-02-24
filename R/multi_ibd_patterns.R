@@ -1,4 +1,4 @@
-#' Compute probabilities of minimal multi-person IBD patterns
+#' Compute probabilities of minimal multi-id IBD patterns
 #'
 #' For two full siblings at one locus, it is well known that there are three distinct minimal IBD patterns
 #' with probabilities 0.25, 0.5 and 0.25. The [`ribd::multiPersonIBD`] function
@@ -26,18 +26,18 @@ multi_ibd_patterns <- function(pedigree, ids = pedtools::leaves(pedigree),
 
 
   # validate inputs
-  person_idx <- .validate_pedigree_ids(ids, pedigree)
+  ids_idx <- .validate_pedigree_ids(ids, pedigree)
   validate_recombination_rates_cpp(recombination_rate_by_locus)
 
   # pedigree will be validated here
   i <- inheritance_space(pedigree, exploit_symmetries = TRUE)
 
-  # generate all minimal multi person IBD patterns by v in the columns of m
+  # generate all minimal multi id IBD patterns by v in the columns of m
   m <- get_multi_ibd_patterns_by_v(number_of_ped_members = length(pedigree$ID),
                                    ped_row_is_founder_idx = which(pedigree$FIDX == 0),
                                    from_allele_idx = i$transmissions$from_allele_idx,
                                    to_allele_idx = i$transmissions$to_allele_idx,
-                                   person_ids = person_idx,
+                                   ids_idx = ids_idx,
                                    number_of_fixed_transmissions = sum(i$transmissions$is_fixed),
                                    top_to_bottom_order = i$transmissions$top_to_bottom_order,
                                    minimal = TRUE)
@@ -47,7 +47,7 @@ multi_ibd_patterns <- function(pedigree, ids = pedtools::leaves(pedigree),
   if (number_of_loci == 1){
 
     if (pedtools::hasInbredFounders(pedigree)){
-      .assert_persons_are_not_inbred_founders(pedigree, ids)
+      .assert_ids_are_not_inbred_founders(pedigree, ids)
 
       pr_v_constant <- -1
       pr_v <- v_prior_with_f(pedigree, i)

@@ -6,7 +6,7 @@
 \usage{
 inheritance_space(
   pedigree,
-  persons,
+  ids,
   coefficients = "ibd",
   exploit_symmetries = TRUE
 )

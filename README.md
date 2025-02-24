@@ -49,11 +49,11 @@ Besides `kappa`, other identity coefficients supported include:
 - `detailed`: the 15 detailed identity coefficients
 
 For example, the inbreeding coefficient may be computed as an `ibd`
-state for a single person.
+state for a single pedigree member.
 
 ``` r
 ped_inbred <- pedtools::fullSibMating(n = 1)
-d_ibd(ibd = 1, pedigree = ped_inbred, persons = 5, coefficients = "ibd")
+d_ibd(ibd = 1, pedigree = ped_inbred, ids = 5, coefficients = "ibd")
 #> [1] 0.25
 ```
 

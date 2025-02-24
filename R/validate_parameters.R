@@ -9,17 +9,17 @@
   }
 }
 
-.check_persons_compatible_with_coeff <- function(persons, coeff){
+.check_ids_compatible_with_coeff <- function(ids, coeff){
 
   if (coeff == COEFF_IBD){
-    if (length(persons) < 1){
-      stop("Persons needs to have at least length one for IBD status coefficients")
+    if (length(ids) < 1){
+      stop("ids needs to have at least length one for IBD status coefficients")
     }
   }
   else{
-    if (length(persons) != 2){
-      stop("Persons need to have length 2 for the chosen coefficients. ",
-           "Actual length: ", length(persons))
+    if (length(ids) != 2){
+      stop("ids need to have length 2 for the chosen coefficients. ",
+           "Actual length: ", length(ids))
     }
   }
 }
@@ -30,14 +30,14 @@
   }
 }
 
-.assert_persons_are_not_inbred_founders <- function(pedigree, persons){
+.assert_ids_are_not_inbred_founders <- function(pedigree, ids){
 
-  persons_idx <- match(persons, pedigree$ID)
-  persons_idx_is_founder <- pedigree$FIDX[persons_idx] == 0L
+  ids_idx <- match(ids, pedigree$ID)
+  ids_idx_is_founder <- pedigree$FIDX[ids_idx] == 0L
 
-  f <- pedtools::founderInbreeding(pedigree, persons[persons_idx_is_founder],)
+  f <- pedtools::founderInbreeding(pedigree, ids[ids_idx_is_founder],)
   if (any(f > 0)){
-    stop("Persons should not include inbred founders")
+    stop("ids should not include inbred founders")
   }
 }
 
@@ -73,15 +73,15 @@
 
 .validate_pedigree_ids <- function(ids, pedigree){
 
-  person_idx <- match(ids, table = pedigree$ID)
+  ids_idx <- match(ids, table = pedigree$ID)
 
-  if (anyNA(person_idx)) {
+  if (anyNA(ids_idx)) {
     stop("Id(s) ",
-         paste(c( ids[is.na(person_idx)]), collapse = ", "),
+         paste(c( ids[is.na(ids_idx)]), collapse = ", "),
          , " not found in pedigree")
   }
 
-  person_idx
+  ids_idx
 }
 
 .validate_recombination_rates_compatible_with_obs <- function(obs, argument_name, recombination_rates){

@@ -7,20 +7,20 @@ const int COEFF_IDENTITY = 9;
 const int COEFF_DETAILED = 15;
 
 // [[Rcpp::export]]
-int get_ibd_state_1p(IntegerVector x, int person_idx){
-  int a = x[2 * person_idx - 2];
-  int b = x[2 * person_idx - 1];
+int get_ibd_state_1p(IntegerVector x, int id_idx){
+  int a = x[2 * id_idx - 2];
+  int b = x[2 * id_idx - 1];
 
   return a==b;
 }
 
 // [[Rcpp::export]]
-int get_ibd_state_2p(IntegerVector x, int person_idx1, int person_idx2){
-  int a = x[2 * person_idx1 - 2];
-  int b = x[2 * person_idx1 - 1];
+int get_ibd_state_2p(IntegerVector x, int id_idx1, int id_idx2){
+  int a = x[2 * id_idx1 - 2];
+  int b = x[2 * id_idx1 - 1];
 
-  int c = x[2 * person_idx2 - 2];
-  int d = x[2 * person_idx2 - 1];
+  int c = x[2 * id_idx2 - 2];
+  int d = x[2 * id_idx2 - 1];
 
   if (a==b){
     int ibd = (a == c) + (a == d);
@@ -36,12 +36,12 @@ int get_ibd_state_2p(IntegerVector x, int person_idx1, int person_idx2){
 }
 
 // [[Rcpp::export]]
-int get_kappa_state(IntegerVector x, int person_idx1, int person_idx2){
-  int a = x[2 * person_idx1 - 2];
-  int b = x[2 * person_idx1 - 1];
+int get_kappa_state(IntegerVector x, int id_idx1, int id_idx2){
+  int a = x[2 * id_idx1 - 2];
+  int b = x[2 * id_idx1 - 1];
 
-  int c = x[2 * person_idx2 - 2];
-  int d = x[2 * person_idx2 - 1];
+  int c = x[2 * id_idx2 - 2];
+  int d = x[2 * id_idx2 - 1];
 
   if (a==b) return 0;
   if (c==d) return 0;
@@ -52,32 +52,32 @@ int get_kappa_state(IntegerVector x, int person_idx1, int person_idx2){
 }
 
 // [[Rcpp::export]]
-int get_joint_ibd_state(IntegerVector x, IntegerVector persons_idx){
-  if (persons_idx.size() < 2){
-    Rcpp::stop("need at least two persons");
+int get_joint_ibd_state(IntegerVector x, IntegerVector ids_idx){
+  if (ids_idx.size() < 2){
+    Rcpp::stop("need at least two ids");
   }
 
-  int a = x[2 * persons_idx[0] - 2];
-  int b = x[2 * persons_idx[0] - 1];
+  int a = x[2 * ids_idx[0] - 2];
+  int b = x[2 * ids_idx[0] - 1];
 
-  // check if a is present across all persons
+  // check if a is present across all ids
   bool a_present_everywhere = true;
   bool b_present_everywhere = true;
 
-  bool any_hets_in_other_persons = false;
+  bool any_hets_in_other_ids = false;
 
-  for (int i_person = 1; i_person < persons_idx.size(); i_person++){
-    int c = x[2 * persons_idx[i_person] - 2];
-    int d = x[2 * persons_idx[i_person] - 1];
+  for (int i_id = 1; i_id < ids_idx.size(); i_id++){
+    int c = x[2 * ids_idx[i_id] - 2];
+    int d = x[2 * ids_idx[i_id] - 1];
 
     a_present_everywhere &= (c == a || d == a);
     b_present_everywhere &= (c == b || d == b);
 
-    any_hets_in_other_persons |= (c != d);
+    any_hets_in_other_ids |= (c != d);
   }
 
   if (a == b && a_present_everywhere && b_present_everywhere) {
-    if (any_hets_in_other_persons){
+    if (any_hets_in_other_ids){
       return 1;
     }else{
       return 2;
@@ -109,12 +109,12 @@ int get_comparison_mask(int a, int b, int c, int d){
 }
 
 // [[Rcpp::export]]
-int get_Jacquard_state(IntegerVector x, int person_idx1, int person_idx2){
-  int a = x[2 * person_idx1 - 2];
-  int b = x[2 * person_idx1 - 1];
+int get_Jacquard_state(IntegerVector x, int id_idx1, int id_idx2){
+  int a = x[2 * id_idx1 - 2];
+  int b = x[2 * id_idx1 - 1];
 
-  int c = x[2 * person_idx2 - 2];
-  int d = x[2 * person_idx2 - 1];
+  int c = x[2 * id_idx2 - 2];
+  int d = x[2 * id_idx2 - 1];
 
   int comparison_mask = get_comparison_mask(a, b, c, d);
   switch(comparison_mask){
@@ -157,12 +157,12 @@ int get_Jacquard_state(IntegerVector x, int person_idx1, int person_idx2){
 }
 
 // [[Rcpp::export]]
-int get_detailed_Jacquard_state(IntegerVector x, int person_idx1, int person_idx2){
-  int a = x[2 * person_idx1 - 2];
-  int b = x[2 * person_idx1 - 1];
+int get_detailed_Jacquard_state(IntegerVector x, int id_idx1, int id_idx2){
+  int a = x[2 * id_idx1 - 2];
+  int b = x[2 * id_idx1 - 1];
 
-  int c = x[2 * person_idx2 - 2];
-  int d = x[2 * person_idx2 - 1];
+  int c = x[2 * id_idx2 - 2];
+  int d = x[2 * id_idx2 - 1];
 
   int comparison_mask = get_comparison_mask(a, b, c, d);
   switch(comparison_mask){
@@ -203,34 +203,34 @@ int get_detailed_Jacquard_state(IntegerVector x, int person_idx1, int person_idx
 }
 
 // [[Rcpp::export]]
-int get_ibd_state(IntegerVector x, int coeff, IntegerVector persons_idx){
+int get_ibd_state(IntegerVector x, int coeff, IntegerVector ids_idx){
 
   switch(coeff){
   case COEFF_IBD:
-    if (persons_idx.size() == 1){
-      return get_ibd_state_1p(x, persons_idx[0]);
+    if (ids_idx.size() == 1){
+      return get_ibd_state_1p(x, ids_idx[0]);
     }
-    else if (persons_idx.size() == 2){
-      return get_ibd_state_2p(x, persons_idx[0], persons_idx[1]);
+    else if (ids_idx.size() == 2){
+      return get_ibd_state_2p(x, ids_idx[0], ids_idx[1]);
     }
     else{
-      return get_joint_ibd_state(x, persons_idx);
+      return get_joint_ibd_state(x, ids_idx);
     }
   case COEFF_KAPPA:
-    return get_kappa_state(x, persons_idx[0], persons_idx[1]);
+    return get_kappa_state(x, ids_idx[0], ids_idx[1]);
   case COEFF_IDENTITY:
-    return get_Jacquard_state(x, persons_idx[0], persons_idx[1]);
+    return get_Jacquard_state(x, ids_idx[0], ids_idx[1]);
   case COEFF_DETAILED:
-    return get_detailed_Jacquard_state(x, persons_idx[0], persons_idx[1]);
+    return get_detailed_Jacquard_state(x, ids_idx[0], ids_idx[1]);
   default:
     Rcpp::stop("Unknown ibd coeff");
   }
 }
 
-IntegerVector assign_founder_alleles(int number_of_persons,
+IntegerVector assign_founder_alleles(int number_of_ids,
                                      IntegerVector ped_row_is_founder_idx){
 
-  IntegerVector x(2 * number_of_persons);
+  IntegerVector x(2 * number_of_ids);
 
   for (int i_founder = 0; i_founder < ped_row_is_founder_idx.size(); i_founder++){
     int idx_1based = ped_row_is_founder_idx[i_founder];
@@ -265,7 +265,7 @@ CharacterVector get_alleles_for_v(int v,
                                 IntegerVector ped_row_is_founder_idx,
                                 IntegerVector from_allele_idx,
                                 IntegerVector to_allele_idx,
-                                IntegerVector persons_idx,
+                                IntegerVector ids_idx,
                                 int number_of_fixed_transmissions,
                                 IntegerVector top_to_bottom_order){
 
@@ -300,7 +300,7 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
                                   IntegerVector ped_row_is_founder_idx,
                                   IntegerVector from_allele_idx,
                                   IntegerVector to_allele_idx,
-                                  IntegerVector persons_idx,
+                                  IntegerVector ids_idx,
                                   int number_of_fixed_transmissions,
                                   IntegerVector top_to_bottom_order,
                                   int coeff){
@@ -322,27 +322,27 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
     drop_founder_alleles(x, v, from_allele_idx, to_allele_idx, top_to_bottom_order);
 
     // obtain ibd state for this inheritance vector
-    ibd_states[v] = get_ibd_state(x, coeff, persons_idx);
+    ibd_states[v] = get_ibd_state(x, coeff, ids_idx);
   }
 
   return ibd_states;
 }
 
 // [[Rcpp::export]]
-std::vector<int> minimal_pattern(IntegerVector x, IntegerVector person_idx_1_based){
+std::vector<int> minimal_pattern(IntegerVector x, IntegerVector id_idx_1_based){
 
-  std::vector<int> ibd_pattern(person_idx_1_based.size()*2);
+  std::vector<int> ibd_pattern(id_idx_1_based.size()*2);
 
   std::unordered_map<int, int> distinct_allele_num_by_placeholder;
   int distinct_allele_num = 1;
 
-  for (int i_person = 0; i_person < person_idx_1_based.size(); i_person++){
+  for (int i_id = 0; i_id < id_idx_1_based.size(); i_id++){
 
-    // grab allele placeholders for this person
-    int idx_person = person_idx_1_based[i_person];
+    // grab allele placeholders for this id
+    int idx_id = id_idx_1_based[i_id];
 
-    int a = x[2 * (idx_person - 1)];
-    int b = x[2 * (idx_person - 1) + 1];
+    int a = x[2 * (idx_id - 1)];
+    int b = x[2 * (idx_id - 1) + 1];
 
     // do we need to swap labels to obtain the minimal pattern?
     auto it_a = distinct_allele_num_by_placeholder.find(a);
@@ -353,11 +353,11 @@ std::vector<int> minimal_pattern(IntegerVector x, IntegerVector person_idx_1_bas
 
     if ((a_is_new && b_is_new) && (a != b)){
       // both new so it may be necessary to swap their labels
-      for (int j_person = i_person + 1; j_person < person_idx_1_based.size(); j_person++){
-        int idx_person2 = person_idx_1_based[j_person];
+      for (int j_id = i_id + 1; j_id < id_idx_1_based.size(); j_id++){
+        int idx_id2 = id_idx_1_based[j_id];
 
-        int c =  x[2 * (idx_person2 - 1)];
-        int d =  x[2 * (idx_person2 - 1) + 1];
+        int c =  x[2 * (idx_id2 - 1)];
+        int d =  x[2 * (idx_id2 - 1) + 1];
 
         // if this is the first genotype with exactly one of a,b
         // then swap if it's b
@@ -375,8 +375,8 @@ std::vector<int> minimal_pattern(IntegerVector x, IntegerVector person_idx_1_bas
     }
 
     // count distinct alleles
-    for (int i_person_allele = 0; i_person_allele < 2; i_person_allele++){
-      int allele = i_person_allele == 0 ? a : b;
+    for (int i_id_allele = 0; i_id_allele < 2; i_id_allele++){
+      int allele = i_id_allele == 0 ? a : b;
 
       // do we have a number for this allele yet?
       auto it = distinct_allele_num_by_placeholder.find(allele);
@@ -384,19 +384,19 @@ std::vector<int> minimal_pattern(IntegerVector x, IntegerVector person_idx_1_bas
       if (it == distinct_allele_num_by_placeholder.end()){
         // new distinct allele
         distinct_allele_num_by_placeholder[allele] = distinct_allele_num;
-        ibd_pattern[2 * i_person + i_person_allele] = distinct_allele_num;
+        ibd_pattern[2 * i_id + i_id_allele] = distinct_allele_num;
 
         distinct_allele_num++;
       }
       else{
         // known allele
-        ibd_pattern[2 * i_person + i_person_allele] = it->second;
+        ibd_pattern[2 * i_id + i_id_allele] = it->second;
       }
     }
 
     // keep minimal pattern ordered
-    if (ibd_pattern[2 * i_person] > ibd_pattern[2 * i_person + 1]){
-      std::swap(ibd_pattern[2 * i_person], ibd_pattern[2 * i_person + 1]);
+    if (ibd_pattern[2 * i_id] > ibd_pattern[2 * i_id + 1]){
+      std::swap(ibd_pattern[2 * i_id], ibd_pattern[2 * i_id + 1]);
     }
   }
 
@@ -409,12 +409,12 @@ List get_multi_ibd_patterns_by_v(int number_of_ped_members,
                                   IntegerVector ped_row_is_founder_idx,
                                   IntegerVector from_allele_idx,
                                   IntegerVector to_allele_idx,
-                                  IntegerVector person_ids,
+                                  IntegerVector ids_idx,
                                   int number_of_fixed_transmissions,
                                   IntegerVector top_to_bottom_order,
                                   bool minimal = true){
 
-  int pattern_size = person_ids.size() * 2;
+  int pattern_size = ids_idx.size() * 2;
 
   int number_of_transmissions = from_allele_idx.size();
   int number_of_non_fixed_transmissions = number_of_transmissions - number_of_fixed_transmissions;
@@ -433,8 +433,8 @@ List get_multi_ibd_patterns_by_v(int number_of_ped_members,
     drop_founder_alleles(x, v, from_allele_idx, to_allele_idx, top_to_bottom_order);
 
     if (minimal){
-      // determine multi person ibd patterns
-      std::vector<int> m = minimal_pattern(x, person_ids);
+      // determine multi id ibd patterns
+      std::vector<int> m = minimal_pattern(x, ids_idx);
 
       auto insertion_result = unique_patterns_set.insert(m);
       pattern_references_by_v[v] = &(*insertion_result.first);
@@ -442,16 +442,16 @@ List get_multi_ibd_patterns_by_v(int number_of_ped_members,
     else{
       std::vector<int> m(pattern_size);
 
-      for (int i_person = 0; i_person < person_ids.size(); i_person++){
+      for (int i_id = 0; i_id < ids_idx.size(); i_id++){
 
-        // grab allele placeholders for this person
-        int idx_person = person_ids[i_person];
+        // grab allele placeholders for this id
+        int idx_id = ids_idx[i_id];
 
-        int a = x[2 * (idx_person - 1)];
-        int b = x[2 * (idx_person - 1) + 1];
+        int a = x[2 * (idx_id - 1)];
+        int b = x[2 * (idx_id - 1) + 1];
 
-        m[2 * i_person] = a;
-        m[2 * i_person + 1] = b;
+        m[2 * i_id] = a;
+        m[2 * i_id + 1] = b;
       }
 
       auto insertion_result = unique_patterns_set.insert(m);
@@ -608,7 +608,7 @@ DataFrame multi_ibd_patterns_df(NumericVector prob,
   // id columns by locus
   int i_df_col = 0;
   for (int i_locus = 0; i_locus < number_of_loci; i_locus++){
-    for (int i_person = 0; i_person < number_of_ids; i_person++){
+    for (int i_id = 0; i_id < number_of_ids; i_id++){
       CharacterVector id_column(number_of_rows);
 
       for (int i_row = 0; i_row < number_of_rows; i_row++){
@@ -616,15 +616,15 @@ DataFrame multi_ibd_patterns_df(NumericVector prob,
 
         int i_pattern = multi_locus_m_idx(idx, i_locus) - 1;
 
-        int a = unique_patterns(2 * i_person, i_pattern);
-        int b = unique_patterns(2 * i_person + 1, i_pattern);
+        int a = unique_patterns(2 * i_id, i_pattern);
+        int b = unique_patterns(2 * i_id + 1, i_pattern);
 
         id_column[i_row] = std::to_string(a) + " " + std::to_string(b);
       }
 
       result[1 + i_df_col] = id_column;
 
-      std::string id = Rcpp::as<std::string>(ids[i_person]);
+      std::string id = Rcpp::as<std::string>(ids[i_id]);
       col_names[1 + i_df_col] =  id + "@"+ std::to_string(i_locus+1) +"";
 
       i_df_col++;
