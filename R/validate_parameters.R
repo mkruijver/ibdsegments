@@ -48,12 +48,21 @@
   valid_obs <- VALID_OBS_BY_COEFF_NAME[[nm]]
   if (is.null(valid_obs)) stop("Could not obtain valid values for coefficient: ", coeff)
 
-  obs_is_invalid <- is.na(match(obs, table = valid_obs))
+  is_unchecked <- FALSE
+  if (length(valid_obs) == 1){
+    if (isTRUE(valid_obs[1] == "unchecked")){
+      is_unchecked <- TRUE
+    }
+  }
 
-  if (any(obs_is_invalid)){
-    stop(argument_name, " should only take values ",
-         paste(valid_obs, collapse = ", "), " for ", nm, " coefficients. ",
-         "Invalid value(s): ", paste0(head(obs[obs_is_invalid]), collapse = ", "))
+  if (!is_unchecked){
+    obs_is_invalid <- is.na(match(obs, table = valid_obs))
+
+    if (any(obs_is_invalid)){
+      stop(argument_name, " should only take values ",
+           paste(valid_obs, collapse = ", "), " for ", nm, " coefficients. ",
+           "Invalid value(s): ", paste0(head(obs[obs_is_invalid]), collapse = ", "))
+    }
   }
 }
 

@@ -5,6 +5,7 @@ const int COEFF_IBD = 1;
 const int COEFF_KAPPA = 2;
 const int COEFF_IDENTITY = 9;
 const int COEFF_DETAILED = 15;
+const int COEFF_V = 99;
 
 // [[Rcpp::export]]
 int get_ibd_state_1p(IntegerVector x, int id_idx){
@@ -260,12 +261,11 @@ void drop_founder_alleles(IntegerVector x,
 }
 
 // [[Rcpp::export]]
-CharacterVector get_alleles_for_v(int v,
+CharacterVector get_founder_labels_for_v(int v,
                                 int number_of_ped_members,
                                 IntegerVector ped_row_is_founder_idx,
                                 IntegerVector from_allele_idx,
                                 IntegerVector to_allele_idx,
-                                IntegerVector ids_idx,
                                 int number_of_fixed_transmissions,
                                 IntegerVector top_to_bottom_order){
 
@@ -312,17 +312,21 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
   int number_of_canonical_inheritance_vectors = 1 << number_of_non_fixed_transmissions;;
   IntegerVector ibd_states(number_of_canonical_inheritance_vectors);
 
-  // assign allele vector
-  IntegerVector x = assign_founder_alleles(number_of_ped_members, ped_row_is_founder_idx);
+  if (coeff != COEFF_V){
+    // assign allele vector
+    IntegerVector x = assign_founder_alleles(number_of_ped_members, ped_row_is_founder_idx);
 
-  // drop alleles for each choice of inheritance vector
-  for (int v = 0; v < number_of_canonical_inheritance_vectors; v++){
+    // drop alleles for each choice of inheritance vector
+    for (int v = 0; v < number_of_canonical_inheritance_vectors; v++){
 
-    // drop alleles down the pedigree for this inheritance vector
-    drop_founder_alleles(x, v, from_allele_idx, to_allele_idx, top_to_bottom_order);
+      // drop alleles down the pedigree for this inheritance vector
+      drop_founder_alleles(x, v, from_allele_idx, to_allele_idx, top_to_bottom_order);
 
-    // obtain ibd state for this inheritance vector
-    ibd_states[v] = get_ibd_state(x, coeff, ids_idx);
+      // obtain ibd state for this inheritance vector
+      ibd_states[v] = get_ibd_state(x, coeff, ids_idx);
+    }
+  }else{
+    ibd_states = Rcpp::seq(0, number_of_canonical_inheritance_vectors - 1);
   }
 
   return ibd_states;
