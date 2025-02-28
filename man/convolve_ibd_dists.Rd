@@ -19,5 +19,71 @@ convolve_ibd_dists(
 ibd_dist
 }
 \description{
-Convolve IBD distributions to obtain the distribution of the sum
+Chromosome-wise IBD distributions obtained from the \code{total_ibd_dist}
+function can be convoluted manually using the \code{convolve_ibd_dists}
+function. This allows finer control of the procedure by controlling
+the number of gridpoints used in the FFT and the threshold for
+point masses to be retained.
+}
+\details{
+The \code{convolve_ibd_dist} implements a convolution procedure based on a self
+contained variant of the recipe implemented in the \code{distr} package adapted
+to this use case. In particular, the IBD distribution for one
+chromosome is often a mixture of two point masses and continuous with finite
+support otherwise. Convolution increases the number of point masses and
+decreases their probability mass. This function assumes that small point
+masses are not of specific interest and will discard the point masses when
+the probability mass is smaller than \code{point_mass_eps} with a default value
+of \code{1e-9}. For typical pedigree relationships this means that the IBD
+distribution of more than a few chromosomes is treated as a continuous
+distribution admitting a density function.
+
+The \code{number_of_gridpoints_exponent} controls the density of gridpoints in the
+FFT. By default this is \code{12} which means that \code{2^12=4096} gridpoints are
+used. Increasing this parameter improves accuracy at the cost of increased
+runtime and memory use.
+
+The point masses are of particular interest in some applications. For
+example, the probability that no part of the autosomal genome is inherited
+may be of interest. In that case, the point masses should not be discarded
+and the \code{d_cibd} function may be used. See the example below, for further
+details.
+}
+\examples{
+## Convolution of IBD distributions for half siblings at chromosome 1 and 2
+
+# define half sib pedigree
+ped_hs <- pedtools::halfSibPed()
+
+# obtain chromosome-wise distributions
+d1 <- total_ibd_dist(pedigree = ped_hs, chromosome_length = 267.77)
+d2 <- total_ibd_dist(pedigree = ped_hs, chromosome_length = 251.73)
+
+convolve_ibd_dists(d1, d2) # 4 point masses
+
+## Accuracy of convolution depends on number of gridpoints
+
+L <- c(267.77, 251.73, 218.31, 202.89, 197.08, 186.02, 178.4, 161.54,
+       157.35, 169.28, 154.5, 165.49, 127.23, 116, 117.32, 126.59, 129.53,
+       116.52, 106.35, 107.76, 62.88, 70.84)
+
+# obtain chromosome-wise distributions for half siblings
+hs <- total_ibd_dist(pedigree = ped_hs,
+                     chromosome_length = L, convolve = FALSE)
+
+# obtain moments of the sum by summing the moments..
+mean_hat <- sum(sapply(hs, E))
+sd_hat <- sqrt(sum(sapply(hs, var)))
+
+# .. or by summing the distributions
+sd_hat_by_k <- sapply(k, function(k) sd(convolve_ibd_dists(hs,
+                                        number_of_gridpoints_exponent = k)))
+mean_hat_by_k <- sapply(k, function(k) E(convolve_ibd_dists(hs,
+                                        number_of_gridpoints_exponent = k)))
+
+plot(k, mean_hat_by_k)
+abline(h = mean_hat, lty = 2)
+
+plot(k, sd_hat_by_k)
+abline(h = sd_hat, lty = 2)
 }
