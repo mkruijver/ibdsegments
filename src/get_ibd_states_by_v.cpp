@@ -8,7 +8,7 @@ const int COEFF_DETAILED = 15;
 const int COEFF_V = 99;
 
 // [[Rcpp::export]]
-int get_ibd_state_1p(IntegerVector x, int id_idx){
+int get_ibd_state_1p(const IntegerVector &x, const int id_idx){
   int a = x[2 * id_idx - 2];
   int b = x[2 * id_idx - 1];
 
@@ -16,7 +16,7 @@ int get_ibd_state_1p(IntegerVector x, int id_idx){
 }
 
 // [[Rcpp::export]]
-int get_ibd_state_2p(IntegerVector x, int id_idx1, int id_idx2){
+int get_ibd_state_2p(const IntegerVector &x, const int id_idx1, const int id_idx2){
   int a = x[2 * id_idx1 - 2];
   int b = x[2 * id_idx1 - 1];
 
@@ -28,16 +28,18 @@ int get_ibd_state_2p(IntegerVector x, int id_idx1, int id_idx2){
 
     return ibd;
   }
-  else{
-    int ibd = (a == c) + (a == d) - (a == c && c == d) +
-      (b == c) + (b == d) - (b == c && c==d);
-
-    return ibd;
+  else{    // a!=b
+    if (c==d){
+      return (a == c) + (b == c);
+    }
+    else{
+      return (a == c) + (a == d) + (b == c) + (b == d);
+    }
   }
 }
 
 // [[Rcpp::export]]
-int get_kappa_state(IntegerVector x, int id_idx1, int id_idx2){
+int get_kappa_state(const IntegerVector &x, const int id_idx1, const int id_idx2){
   int a = x[2 * id_idx1 - 2];
   int b = x[2 * id_idx1 - 1];
 
@@ -53,7 +55,7 @@ int get_kappa_state(IntegerVector x, int id_idx1, int id_idx2){
 }
 
 // [[Rcpp::export]]
-int get_joint_ibd_state(IntegerVector x, IntegerVector ids_idx){
+int get_joint_ibd_state(const IntegerVector &x, const IntegerVector &ids_idx){
   if (ids_idx.size() < 2){
     Rcpp::stop("need at least two ids");
   }
@@ -93,7 +95,7 @@ int get_joint_ibd_state(IntegerVector x, IntegerVector ids_idx){
   return 0;
 }
 
-int get_comparison_mask(int a, int b, int c, int d){
+int get_comparison_mask(const int a, const int b, const int c, const int d){
   // we compare clockwise: a=b, a=d, a=c,
   //                       b=d, b=c, d=c
 
@@ -110,7 +112,7 @@ int get_comparison_mask(int a, int b, int c, int d){
 }
 
 // [[Rcpp::export]]
-int get_Jacquard_state(IntegerVector x, int id_idx1, int id_idx2){
+int get_Jacquard_state(const IntegerVector &x, const int id_idx1, const int id_idx2){
   int a = x[2 * id_idx1 - 2];
   int b = x[2 * id_idx1 - 1];
 
@@ -204,7 +206,7 @@ int get_detailed_Jacquard_state(IntegerVector x, int id_idx1, int id_idx2){
 }
 
 // [[Rcpp::export]]
-int get_ibd_state(IntegerVector x, int coeff, IntegerVector ids_idx){
+int get_ibd_state(IntegerVector &x, int coeff, IntegerVector &ids_idx){
 
   switch(coeff){
   case COEFF_IBD:
@@ -243,13 +245,14 @@ IntegerVector assign_founder_alleles(int number_of_ids,
   return x;
 }
 
-void drop_founder_alleles(IntegerVector x,
+void drop_founder_alleles(IntegerVector &x,
                           int v,
-                          IntegerVector from_allele_idx,
-                          IntegerVector to_allele_idx,
-                          IntegerVector top_to_bottom_order){
+                          const IntegerVector &from_allele_idx,
+                          const IntegerVector &to_allele_idx,
+                          const IntegerVector &top_to_bottom_order){
 
-  for (int i_order = 0; i_order < top_to_bottom_order.size(); i_order++){
+  int n = top_to_bottom_order.size();
+  for (int i_order = 0; i_order < n; i_order++){
 
     int i_transmission = top_to_bottom_order[i_order] - 1;
 
