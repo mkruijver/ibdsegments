@@ -8,11 +8,11 @@
 #' (0 and chromosome length) and a continuous density.
 #'
 #' If `convolve=TRUE` (the default) and `chromosome_length` has length
-#' great than one, the convolution of the distributions will be obtained
+#' greater than one, the convolution of the distributions will be obtained
 #' by FFT using the [`convolve_ibd_dists`] function. Convolution will
 #' typically produce a rapidly increasing number of point masses
 #' with very small probabilities which are discarded if the
-#' probability falls below a threshold; see [`convolve_ibd_dists`]
+#' probability falls below a threshold of `1e-9`; see [`convolve_ibd_dists`]
 #' for details and finer control.
 #'
 #' @param pedigree Pedigree in [`pedtools::ped`] form.

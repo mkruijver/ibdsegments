@@ -42,11 +42,11 @@ total IBD length over one chromosome is a mixture of two point masses
 (0 and chromosome length) and a continuous density.
 
 If \code{convolve=TRUE} (the default) and \code{chromosome_length} has length
-great than one, the convolution of the distributions will be obtained
+greater than one, the convolution of the distributions will be obtained
 by FFT using the \code{\link{convolve_ibd_dists}} function. Convolution will
 typically produce a rapidly increasing number of point masses
 with very small probabilities which are discarded if the
-probability falls below a threshold; see \code{\link{convolve_ibd_dists}}
+probability falls below a threshold of \code{1e-9}; see \code{\link{convolve_ibd_dists}}
 for details and finer control.
 }
 \examples{
