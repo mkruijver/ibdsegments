@@ -100,17 +100,17 @@ NumericVector ibd_log10_pr_cpp(IntegerVector ibd_state_by_v,
 
   // assign uniform prior on transmission vectors
   NumericVector v_prior;
+  int number_of_v = ibd_state_by_v.size();
   if (pr_v_constant >= 0){
-    v_prior = NumericVector(ibd_state_by_v.size(), pr_v_constant);
+    v_prior = NumericVector(number_of_v, pr_v_constant);
   }
   else{
     v_prior = pr_v_biased;
   }
 
   // reserve memory for a posterior
-  NumericVector v_posterior(ibd_state_by_v.size());
-
-  NumericVector v_pr(ibd_state_by_v.size());
+  NumericVector v_posterior(number_of_v);
+  NumericVector v_pr(number_of_v);
 
   int number_of_loci = ibd_by_locus.size();
 
@@ -158,7 +158,7 @@ NumericVector ibd_log10_pr_cpp(IntegerVector ibd_state_by_v,
     }
 
     // add to the locus pr
-    for (int i_v = 0; i_v < v_prior.size(); i_v++){
+    for (int i_v = 0; i_v < number_of_v; i_v++){
       double pr = ibd_locus == ibd_state_by_v[i_v] ?  v_prior[i_v] : 0;
 
       v_pr[i_v] = pr;
@@ -166,9 +166,11 @@ NumericVector ibd_log10_pr_cpp(IntegerVector ibd_state_by_v,
       locus_pr += pr;
     }
 
-    // compute a posterior on transmission vectors
-    for (int i_v = 0; i_v < v_prior.size(); i_v++){
-      v_posterior[i_v] = v_pr[i_v] / locus_pr;
+    if (number_of_loci > 1){
+      // compute a posterior on transmission vectors
+      for (int i_v = 0; i_v < number_of_v; i_v++){
+        v_posterior[i_v] = v_pr[i_v] / locus_pr;
+      }
     }
 
     double log10_pr_locus = std::log10(locus_pr);
