@@ -309,7 +309,12 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
   int number_of_transmissions = from_allele_idx.size();
   int number_of_non_fixed_transmissions = number_of_transmissions - number_of_fixed_transmissions;
 
-  int number_of_canonical_inheritance_vectors = 1 << number_of_non_fixed_transmissions;;
+  int number_of_canonical_inheritance_vectors = 1 << number_of_non_fixed_transmissions;
+
+  if (number_of_non_fixed_transmissions > 30){
+    Rcpp::stop("Number of non-fixed transmissions exceeds 30. This is not currently supported.");
+  }
+
   IntegerVector ibd_states(number_of_canonical_inheritance_vectors);
 
   if (coeff != COEFF_V){
