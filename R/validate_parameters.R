@@ -108,13 +108,13 @@
   }
 }
 
-.validate_ibs_dist(x){
+.validate_ibs_dist <- function(x){
   if (!inherits(x, "ibd_dist")){
     stop("distribution should be of class ibd_dist")
   }
 }
 
-.validate_not_ibd_fraction_dist(x){
+.validate_not_ibd_fraction_dist <- function(x){
   if (x$fraction){
     stop("IBD fraction distributions are not supported in convolution")
   }
