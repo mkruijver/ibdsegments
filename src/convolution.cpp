@@ -74,7 +74,7 @@ List pmf_of_sum(NumericVector x1, NumericVector p1,
       double sum_value = x1[i] + x2[j];
       double prob = p1[i] * p2[j];
 
-      if ((sum_value == 0) || (prob>eps)){
+      if (prob >= eps){
         sum_pmf[sum_value] += prob;
       }
     }
