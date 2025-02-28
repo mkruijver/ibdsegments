@@ -96,6 +96,10 @@ convolve_ibd_dists <- function(...,
 }
 
 convolve_two_ibd_dists <- function(d1, d2, point_mass_eps, number_of_gridpoints_exponent){
+  .validate_ibs_dist(d1)
+  .validate_ibs_dist(d2)
+  .validate_not_ibd_fraction_dist(d1)
+  .validate_not_ibd_fraction_dist(d2)
 
   n_gridpoints <- 2^number_of_gridpoints_exponent
 

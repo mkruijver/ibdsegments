@@ -107,3 +107,15 @@
     stop(argument_name, " should be TRUE or FALSE")
   }
 }
+
+.validate_ibs_dist(x){
+  if (!inherits(x, "ibd_dist")){
+    stop("distribution should be of class ibd_dist")
+  }
+}
+
+.validate_not_ibd_fraction_dist(x){
+  if (x$fraction){
+    stop("IBD fraction distributions are not supported in convolution")
+  }
+}
