@@ -210,12 +210,7 @@ sd.ibd_dist <- function(x){
 }
 
 #' @export
-plot.ibd_dist <- function(x, min_point_mass = 1e-9, ...){
-
-  # blitz tiny point masses
-  if (!is.null(x$point_mass)){
-    x$point_mass <- x$point_mass[x$point_mass$px > min_point_mass,]
-  }
+plot.ibd_dist <- function(x, ...){
 
   args_list <- list(...)
 
