@@ -11,7 +11,8 @@ total_ibd_dist(
   coefficients = "ibd",
   ibd_state = 1L,
   chromosome_length = 267.77,
-  convolve = TRUE
+  convolve = TRUE,
+  ...
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ total_ibd_dist(
 \item{chromosome_length}{Default is 267.77 cM (an estimate of the length of chromosome 1).}
 
 \item{convolve}{Should the distribution of the sum (across chromosomes) be obtained?}
+
+\item{...}{Additional parameters passed to \code{\link{convolve_ibd_dists}} when \code{convolve=TRUE}.}
 }
 \value{
 object of class \code{ibd_dist}
@@ -50,6 +53,30 @@ probability falls below a threshold of \code{1e-9}; see \code{\link{convolve_ibd
 for details and finer control.
 }
 \examples{
+## Total IBD and fraction of IBD for a cousin relationship
+ped_fc <- pedtools::cousinPed()
+
+# total IBD length for 100 cM
+dist_length <- total_ibd_dist(ped_fc, chromosome_length = 100)
+dist_length
+plot(dist_length)
+
+# fraction IBD for 100 cM
+dist_fraction <- total_ibd_dist(ped_fc, chromosome_length = 100,
+                                fraction = TRUE)
+dist_fraction
+plot(dist_fraction)
+
+# distribution of total length across three chromosomes (150, 200, 250 cM)
+plot(total_ibd_dist(ped_fc, chromosome_length = c(150, 200, 250)))
+
+# a quick approximation with reasonable accuracy (with just 256 gridpoints)
+plot(total_ibd_dist(ped_fc, chromosome_length = c(150, 200, 250),
+                    number_of_gridpoints_exponent = 8))
+
+## Difference between IBD distributions between half-sibs, uncle-nephew
+## and grandparent-grandchild relationships
+
 # kappa1 is 1/2 for half sibs, uncle-nephew and grandparent-grandchild
 # but the distribution of the fraction of a chromosome that is in this
 # state differs between the relationships
