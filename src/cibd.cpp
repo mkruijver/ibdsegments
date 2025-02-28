@@ -5,7 +5,7 @@ using namespace Rcpp;
 void one_p_step(const NumericVector& a_prev,
                 NumericVector& a_next,
                 const int stay_in_ibd,
-                const IntegerVector& ibd_state_by_v,
+                const IntegerVector &ibd_state_by_v,
                 const int number_of_transmissions,
                 const IntegerVector& masks){
 
@@ -118,16 +118,17 @@ NumericVector p_step(const NumericVector& a0,
 }
 
 // [[Rcpp::export]]
-NumericVector q_step(const NumericVector a0, const int number_of_transmissions,
-                     const int number_of_fixed_transmissions, const IntegerVector masks) {
+NumericVector q_step(const NumericVector &a0, const int number_of_transmissions,
+                     const int number_of_fixed_transmissions, const IntegerVector &masks) {
 
   int number_of_non_fixed_transmissions = number_of_transmissions - number_of_fixed_transmissions;
 
   double rate = 0.01;
 
-  NumericVector a_next(a0.size());
+  int number_of_v = a0.size();
+  NumericVector a_next(number_of_v);
 
-  for (int v = 0; v < a0.size(); v++){
+  for (int v = 0; v < number_of_v; v++){
     // flip all bits
     for (int i = 0; i < number_of_non_fixed_transmissions; i++){
       int w = v ^ (1 << i);
@@ -387,20 +388,19 @@ double log10_ibd_segment_pr_cpp(NumericVector obs_cM,
   double log10_pr_total = 0.0;
 
   // assign uniform prior on transmission vectors
-  NumericVector v_prior(ibd_state_by_v.size(), 1.0 / ibd_state_by_v.size());
+  int number_of_v = ibd_state_by_v.size();
+  NumericVector v_prior(number_of_v, 1.0 / number_of_v);
 
   // reserve memory for a posterior
-  NumericVector v_posterior(ibd_state_by_v.size());
-  NumericVector v_pr(ibd_state_by_v.size());
-
-  int v_n = v_prior.size();
+  NumericVector v_posterior(number_of_v);
+  NumericVector v_pr(number_of_v);
 
   for (int i_segment = 0; i_segment < obs_ibd.size(); i_segment++){
     int obs_ibd_segment = obs_ibd[i_segment];
     double segment_pr = 0;
 
     // add to the segment pr
-    for (int i_v = 0; i_v < v_n; i_v++){
+    for (int i_v = 0; i_v < number_of_v; i_v++){
 
       double pr = obs_ibd_segment == ibd_state_by_v[i_v] ? v_prior[i_v] : 0;
       v_pr[i_v] = pr;
@@ -413,7 +413,7 @@ double log10_ibd_segment_pr_cpp(NumericVector obs_cM,
     if (segment_pr == 0) return(std::log10(0));
 
     // normalise v_pr to obtain the posterior pr's of v at the start of the segment
-    for (int i_v = 0; i_v < v_pr.size(); i_v++){
+    for (int i_v = 0; i_v < number_of_v; i_v++){
       v_pr[i_v] /= segment_pr;
     }
 
@@ -437,7 +437,7 @@ double log10_ibd_segment_pr_cpp(NumericVector obs_cM,
       }
 
       // obtain posterior distribution of IBD vectors at the end of the segment
-      for (int i_v = 0; i_v < v_next.size(); i_v++){
+      for (int i_v = 0; i_v < number_of_v; i_v++){
         v_next[i_v] /= v_next_sum;
       }
 
