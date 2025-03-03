@@ -263,6 +263,22 @@ void drop_founder_alleles(IntegerVector &x,
   }
 }
 
+void drop_founder_alleles_non_fixed_0based(IntegerVector &x,
+                          const int v,
+                          const IntegerVector &from_allele_idx,
+                          const IntegerVector &to_allele_idx,
+                          const int number_of_non_fixed_transmissions){
+
+  for (int i_transmission = 0;
+       i_transmission < number_of_non_fixed_transmissions; i_transmission++){
+
+    int from_idx = from_allele_idx[i_transmission] + ((v >> i_transmission) & 1);
+    int to_idx = to_allele_idx[i_transmission];
+
+    x[to_idx] = x[from_idx];
+  }
+}
+
 // [[Rcpp::export]]
 CharacterVector get_founder_labels_for_v(int v,
                                 int number_of_ped_members,
@@ -298,6 +314,18 @@ CharacterVector get_founder_labels_for_v(int v,
   return x1;
 }
 
+IntegerVector subtract_one(IntegerVector x){
+  int n = x.size();
+
+  IntegerVector y(n);
+
+  for (int i = 0; i < n; i++){
+    y[i] = x[i] - 1;
+  }
+
+  return y;
+}
+
 // [[Rcpp::export]]
 IntegerVector get_ibd_states_by_v(int number_of_ped_members,
                                   IntegerVector ped_row_is_founder_idx,
@@ -324,11 +352,19 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
     // assign allele vector
     IntegerVector x = assign_founder_alleles(number_of_ped_members, ped_row_is_founder_idx);
 
+    // drop alleles for initial inheritance vector
+    drop_founder_alleles(x, 0,
+                         from_allele_idx, to_allele_idx, top_to_bottom_order);
+
+    IntegerVector from_allele_idx_0based = subtract_one(from_allele_idx);
+    IntegerVector to_allele_idx_0based = subtract_one(to_allele_idx);
+
     // drop alleles for each choice of inheritance vector
     for (int v = 0; v < number_of_canonical_inheritance_vectors; v++){
 
       // drop alleles down the pedigree for this inheritance vector
-      drop_founder_alleles(x, v, from_allele_idx, to_allele_idx, top_to_bottom_order);
+      drop_founder_alleles_non_fixed_0based(x, v, from_allele_idx_0based,
+                      to_allele_idx_0based, number_of_non_fixed_transmissions);
 
       // obtain ibd state for this inheritance vector
       ibd_states[v] = get_ibd_state(x, coeff, ids_idx);
