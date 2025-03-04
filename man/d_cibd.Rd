@@ -5,8 +5,8 @@
 \title{Probability density of continuously observed IBD segment lengths for pedigree members}
 \usage{
 d_cibd(
-  cM = r_cibd_result$length,
-  ibd = r_cibd_result$state,
+  x,
+  ibd,
   pedigree,
   ids = pedtools::leaves(pedigree),
   r_cibd_result,
@@ -15,15 +15,13 @@ d_cibd(
 )
 }
 \arguments{
-\item{cM}{Numeric vector with lengths of segments (centiMorgan).}
+\item{x}{Numeric vector with lengths of segments (centiMorgan) or result from \code{\link{r_cibd}}.}
 
-\item{ibd}{Integer vector. Taking values 0, 1, 2 for \code{states = "ibd"} or \code{states = "kappa"}, 1, ..., 9 for \code{states="identity"} and 1, ..., 15 for \code{states = "detailed"}.}
+\item{ibd}{Integer vector with IBD states in segments if \code{x} is not a result from \code{r_cibd}. Taking values 0, 1, 2 for \code{states = "ibd"} or \code{states = "kappa"}, 1, ..., 9 for \code{states="identity"} and 1, ..., 15 for \code{states = "detailed"}.}
 
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
 \item{ids}{Ids for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
-
-\item{r_cibd_result}{Optionally a result from \code{\link{r_cibd}} for which the probability density is evaluated.}
 
 \item{states}{One of \code{"ibd"} (default), \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
 
@@ -40,25 +38,25 @@ IBD segments on a chromosome.
 ped_fs <- pedtools::nuclearPed(nch = 2)
 
 # probability that full siblings are double IBD (kappa2)
-d_cibd(cM = 0, ibd = 2, ped_fs)
+d_cibd(x = 0, ibd = 2, ped_fs)
 
 # full siblings are double IBD and remain so for 100 cM
-d_cibd(cM = 100, ibd = 2, ped_fs)
+d_cibd(x = 100, ibd = 2, ped_fs)
 
 # full siblings are double IBD for 50 cM,
 # then single IBD for 50 cM
-d_cibd(cM = c(50, 50), ibd = c(2, 1), ped_fs)
+d_cibd(x = c(50, 50), ibd = c(2, 1), ped_fs)
 
 # full siblings are double IBD, remain so for 100 cM
 # and no longer
-d_cibd(cM = c(100, 0), ibd = c(2, 1), ped_fs)
+d_cibd(x = c(100, 0), ibd = c(2, 1), ped_fs)
 
 ## probability density of IBD segment length for first cousins on an infinite chromosome
 ped_fc <- pedtools::cousinPed()
 # first compute the probability of IBD
 k1_fc <- d_ibd(ibd = 1, ped_fc)
 # density of segment length
-f <- Vectorize(function(x) d_cibd(cM = c(x,0), ibd = c(1, 0), ped_fc) / k1_fc)
+f <- Vectorize(function(l) d_cibd(x = c(l,0), ibd = c(1, 0), ped_fc) / k1_fc)
 
 curve(f, 0, 300)
 
@@ -83,8 +81,7 @@ ped_c2 <- pedtools::cousinPed(degree = 2)
 
 r_c1 <- r_cibd(n = 1e2, pedigree = ped_c1)
 
-lr <- d_cibd(r_cibd_result = r_c1, pedigree = ped_c1)/
-  d_cibd(r_cibd_result = r_c1, pedigree = ped_c2)
+lr <- d_cibd(r_c1, pedigree = ped_c1) / d_cibd(r_c1, pedigree = ped_c2)
 
 hist(log10(lr))
 }

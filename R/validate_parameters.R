@@ -119,3 +119,27 @@
     stop("IBD fraction distributions are not supported in convolution")
   }
 }
+
+.validate_integer <- function(x, argument_name){
+  if (!is.integer(x)){
+    stop(argument_name, " should be an integer vector")
+  }
+}
+
+
+.validate_numeric <- function(x, argument_name){
+  if (!is.numeric(x)){
+    stop(argument_name, " should be a numeric vector")
+  }
+}
+.validate_rcibd_result <- function(x){
+
+  if (is.null(x$samples)){
+    stop("x$samples is NULL")
+  }
+
+  .validate_integer(x$samples$sample, "x$samples$sample")
+  .validate_integer(x$samples$chromosome, "x$samples$chromosome")
+  .validate_numeric(x$samples$length, "x$samples$length")
+  .validate_integer(x$samples$state, "x$samples$state")
+}

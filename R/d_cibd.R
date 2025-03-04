@@ -3,9 +3,8 @@
 #' The `d_cibd` function computes the probability density of observed
 #' IBD segments on a chromosome.
 #'
-#' @param cM Numeric vector with lengths of segments (centiMorgan).
-#' @param ibd Integer vector. Taking values 0, 1, 2 for `states = "ibd"` or `states = "kappa"`, 1, ..., 9 for `states="identity"` and 1, ..., 15 for `states = "detailed"`.
-#' @param r_cibd_result Optionally a result from [`r_cibd`] for which the probability density is evaluated.
+#' @param x Numeric vector with lengths of segments (centiMorgan) or result from [`r_cibd`].
+#' @param ibd Integer vector with IBD states in segments if `x` is not a result from `r_cibd`. Taking values 0, 1, 2 for `states = "ibd"` or `states = "kappa"`, 1, ..., 9 for `states="identity"` and 1, ..., 15 for `states = "detailed"`.
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
 #' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
@@ -15,25 +14,25 @@
 #' ped_fs <- pedtools::nuclearPed(nch = 2)
 #'
 #' # probability that full siblings are double IBD (kappa2)
-#' d_cibd(cM = 0, ibd = 2, ped_fs)
+#' d_cibd(x = 0, ibd = 2, ped_fs)
 #'
 #' # full siblings are double IBD and remain so for 100 cM
-#' d_cibd(cM = 100, ibd = 2, ped_fs)
+#' d_cibd(x = 100, ibd = 2, ped_fs)
 #'
 #' # full siblings are double IBD for 50 cM,
 #' # then single IBD for 50 cM
-#' d_cibd(cM = c(50, 50), ibd = c(2, 1), ped_fs)
+#' d_cibd(x = c(50, 50), ibd = c(2, 1), ped_fs)
 #'
 #' # full siblings are double IBD, remain so for 100 cM
 #' # and no longer
-#' d_cibd(cM = c(100, 0), ibd = c(2, 1), ped_fs)
+#' d_cibd(x = c(100, 0), ibd = c(2, 1), ped_fs)
 #'
 #' ## probability density of IBD segment length for first cousins on an infinite chromosome
 #' ped_fc <- pedtools::cousinPed()
 #' # first compute the probability of IBD
 #' k1_fc <- d_ibd(ibd = 1, ped_fc)
 #' # density of segment length
-#' f <- Vectorize(function(x) d_cibd(cM = c(x,0), ibd = c(1, 0), ped_fc) / k1_fc)
+#' f <- Vectorize(function(l) d_cibd(x = c(l,0), ibd = c(1, 0), ped_fc) / k1_fc)
 #'
 #' curve(f, 0, 300)
 #'
@@ -58,18 +57,32 @@
 #'
 #' r_c1 <- r_cibd(n = 1e2, pedigree = ped_c1)
 #'
-#' lr <- d_cibd(r_cibd_result = r_c1, pedigree = ped_c1)/
-#'   d_cibd(r_cibd_result = r_c1, pedigree = ped_c2)
+#' lr <- d_cibd(r_c1, pedigree = ped_c1) / d_cibd(r_c1, pedigree = ped_c2)
 #'
 #' hist(log10(lr))
 #
 #' @export
-d_cibd <- function(cM = r_cibd_result$length,
-                         ibd = r_cibd_result$state,
-                         pedigree, ids = pedtools::leaves(pedigree),
-                         r_cibd_result,
-                         states = "ibd",
-                         log10 = FALSE){
+d_cibd <- function(x,
+                   ibd,
+                   pedigree, ids = pedtools::leaves(pedigree),
+                   r_cibd_result,
+                   states = "ibd",
+                   log10 = FALSE){
+
+  use_rcibd_result <- is.list(x)
+
+  if (use_rcibd_result){
+    .validate_rcibd_result(x)
+
+    if (!missing(ibd)){
+      stop("when x is a result from r_ibd, the ibd parameter should be missing")
+    }
+
+    cM <- x$samples$length
+    ibd <- x$samples$state
+  }else{
+    cM <- x
+  }
 
   # validate inputs
   states_idx <- .validate_states(states)
@@ -81,17 +94,17 @@ d_cibd <- function(cM = r_cibd_result$length,
   i <- inheritance_space(pedigree = pedigree, ids = ids,
                          states = states)
 
-  if (missing(r_cibd_result)){
+  if (!use_rcibd_result){
     log10_pr <- log10_ibd_segment_pr_cpp(cM, ibd,
                                          i$ibd_state_by_v,
                                          i$number_of_relevant_transmissions,
                                          i$relevant_masks)
   }
   else{
-    log10_pr <- log10_ibd_segment_pr_vectorised_cpp(sample = r_cibd_result$samples$sample,
-                                        chromosome = r_cibd_result$samples$chromosome,
-                                        obs_cM = r_cibd_result$samples$length,
-                                        obs_ibd = r_cibd_result$samples$state,
+    log10_pr <- log10_ibd_segment_pr_vectorised_cpp(sample = x$samples$sample,
+                                        chromosome = x$samples$chromosome,
+                                        obs_cM = x$samples$length,
+                                        obs_ibd = x$samples$state,
                                         ibd_state_by_v = i$ibd_state_by_v,
                                         number_of_transmissions = i$number_of_relevant_transmissions,
                                         fixed_transmission_masks = i$relevant_masks)
