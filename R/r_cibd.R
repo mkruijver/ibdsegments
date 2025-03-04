@@ -34,7 +34,7 @@ r_cibd <- function(n,
                    ibd_state = 1L,
                    chromosome_length = 267.77){
 
-  states_idx <- ibdsegments::: .validate_states(states)
+  states_idx <- .validate_states(states)
   .check_ids_compatible_with_states_idx(ids, states_idx)
   .validate_obs_compatible_with_states_idx(ibd_state, "ibd_state", states_idx)
   .validate_pedigree(pedigree, continuous_genome = TRUE)
