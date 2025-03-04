@@ -27,7 +27,7 @@ List random_ibd(int n,
   std::vector<double> start;
   std::vector<double> end;
   std::vector<double> length;
-  std::vector<double> state;
+  std::vector<int> state;
 
   // data structures for collecting summary stats by sample
   std::vector<double> stats_total_length_in_state;
