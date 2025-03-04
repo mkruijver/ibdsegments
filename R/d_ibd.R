@@ -3,11 +3,11 @@
 #' The `d_ibd` function computes the likelihood of IBD
 #' for one position or multiple linked markers on the same chromosome.
 #'
-#' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "ibd"` or `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
+#' @param ibd Integer vector. Taking values 0, 1, 2 for `states = "ibd"` or `states = "kappa"`, 1, ..., 9 for `states="identity"` and 1, ..., 15 for `states = "detailed"`.
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`]`(pedigree)`.
 #' @param recombination_rate_by_locus Numeric vector with length one shorter than `ibd`.
-#' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
+#' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param log10 Should the log10 likelihood be returned? Default is `FALSE`.
 #' @return Numeric
 #' @examples
@@ -32,18 +32,18 @@
 #' # Jacquard's 9 condensed and 15 detailed identity coefficients
 #' ped_fs_mating <- pedtools::fullSibMating(1)
 #'
-#' sapply(1:9, d_ibd, pedigree = ped_fs_mating, coefficients = "identity")
-#' sapply(1:15, d_ibd, pedigree = ped_fs_mating, coefficients = "detailed")
+#' sapply(1:9, d_ibd, pedigree = ped_fs_mating, states = "identity")
+#' sapply(1:15, d_ibd, pedigree = ped_fs_mating, states = "detailed")
 #' @export
 d_ibd <- function(ibd,
                    pedigree, ids = pedtools::leaves(pedigree),
                    recombination_rate_by_locus = numeric(),
-                   coefficients = "ibd",
+                   states = "ibd",
                    log10 = FALSE){
 
-  coeff <- .validate_coefficients(coefficients)
-  .check_ids_compatible_with_coeff(ids, coeff)
-  .validate_obs_compatible_with_coeff(ibd, "ibd", coeff)
+  states_idx <- .validate_states(states)
+  .check_ids_compatible_with_states_idx(ids, states_idx)
+  .validate_obs_compatible_with_states_idx(ibd, "ibd", states_idx)
   validate_recombination_rates_cpp(recombination_rate_by_locus)
   .validate_recombination_rates_compatible_with_obs(ibd,
     "recombination_rate_by_locus", recombination_rate_by_locus)
@@ -56,7 +56,7 @@ d_ibd <- function(ibd,
 
 
   i <- inheritance_space(pedigree = pedigree, ids = ids,
-                         coefficients = coefficients)
+                         states = states)
 
   if (pedtools::hasInbredFounders(pedigree)){
     .assert_ids_are_not_inbred_founders(pedigree, ids)

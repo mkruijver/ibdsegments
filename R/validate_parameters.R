@@ -1,24 +1,24 @@
-.validate_coefficients <- function(coefficients){
-  coefficient_type <- match.arg(coefficients,
-                                choices = names(COEFF_BY_NAME))
+.validate_states <- function(states){
+  states_value <- match.arg(states,
+                                choices = names(STATES_BY_NAME))
 
-  if (coefficient_type %in% names(COEFF_BY_NAME)){
-    return(COEFF_BY_NAME[coefficient_type])
+  if (states_value %in% names(STATES_BY_NAME)){
+    return(STATES_BY_NAME[states_value])
   } else{
-    stop("Unknown coefficient type:", coefficient_type)
+    stop("Unknown states value:", states_value)
   }
 }
 
-.check_ids_compatible_with_coeff <- function(ids, coeff){
+.check_ids_compatible_with_states_idx <- function(ids, states_idx){
 
-  if (coeff == COEFF_IBD){
+  if (states_idx == STATES_IBD){
     if (length(ids) < 1){
-      stop("ids needs to have at least length one for IBD status coefficients")
+      stop("ids needs to have at least length one for IBD states")
     }
   }
   else{
     if (length(ids) != 2){
-      stop("ids need to have length 2 for the chosen coefficients. ",
+      stop("ids need to have length 2 for the chosen states ",
            "Actual length: ", length(ids))
     }
   }
@@ -41,12 +41,12 @@
   }
 }
 
-.validate_obs_compatible_with_coeff <- function(obs, argument_name, coeff){
-  nm <- NAME_BY_COEFF_NAME[as.character(coeff)]
-  if (is.null(nm)) stop("Unknown coefficient value: ", coeff)
+.validate_obs_compatible_with_states_idx <- function(obs, argument_name, states_idx){
+  nm <- NAME_BY_STATES_NAME[as.character(states_idx)]
+  if (is.null(nm)) stop("Unknown states value: ", states_idx)
 
-  valid_obs <- VALID_OBS_BY_COEFF_NAME[[nm]]
-  if (is.null(valid_obs)) stop("Could not obtain valid values for coefficient: ", coeff)
+  valid_obs <- VALID_OBS_BY_STATES_NAME[[nm]]
+  if (is.null(valid_obs)) stop("Could not obtain valid values for states value: ", states_idx)
 
   is_unchecked <- FALSE
   if (length(valid_obs) == 1){
@@ -60,7 +60,7 @@
 
     if (any(obs_is_invalid)){
       stop(argument_name, " should only take values ",
-           paste(valid_obs, collapse = ", "), " for ", nm, " coefficients. ",
+           paste(valid_obs, collapse = ", "), " for ", nm, " states. ",
            "Invalid value(s): ", paste0(head(obs[obs_is_invalid]), collapse = ", "))
     }
   }

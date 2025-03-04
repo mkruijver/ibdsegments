@@ -3,7 +3,7 @@
 #' The `inheritance_space` function determines the space of IBD vectors for a pedigree.
 #'
 #' @export
-inheritance_space <- function(pedigree, ids, coefficients = "ibd",
+inheritance_space <- function(pedigree, ids, states = "ibd",
                               exploit_symmetries = TRUE){
 
   .validate_pedigree(pedigree)
@@ -53,8 +53,8 @@ inheritance_space <- function(pedigree, ids, coefficients = "ibd",
     i$ids_idx <- ids_idx
 
     if (length(ids) > 0){
-      i$coefficients <- coefficients
-      coeff <- .validate_coefficients(coefficients)
+      i$states <- states
+      states_idx <- .validate_states(states)
 
       ibd_state_by_v <- get_ibd_states_by_v(number_of_ped_members = length(pedigree$ID),
                                             ped_row_is_founder_idx = which(pedigree$FIDX == 0),
@@ -63,7 +63,7 @@ inheritance_space <- function(pedigree, ids, coefficients = "ibd",
                                             ids_idx = ids_idx,
                                             number_of_fixed_transmissions = sum(transmissions$is_fixed),
                                             top_to_bottom_order = transmissions$top_to_bottom_order,
-                                            coeff = coeff)
+                                            states_idx = states_idx)
 
       i$ibd_state_by_v <- ibd_state_by_v
     }

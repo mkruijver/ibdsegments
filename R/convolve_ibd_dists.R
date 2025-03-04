@@ -186,7 +186,7 @@ convolve_two_ibd_dists <- function(d1, d2, point_mass_eps, number_of_gridpoints_
 
   dist_sum <- list(f_continuous = f_sum,
                    fraction = d1$fraction,
-                   coefficients = d1$coefficients,
+                   states = d1$states,
                    ibd_state = d1$ibd_state,
                    low = sum_lower,
                    up = sum_upper,

@@ -5,7 +5,7 @@
 #' @param n Number of observations
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
-#' @param coefficients One of `"ibd` (default), `"kappa"`, `"identity"` or `"detailed"`.
+#' @param states One of `"ibd` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
 #'
@@ -30,17 +30,17 @@
 r_cibd <- function(n,
                    pedigree,
                    ids = pedtools::leaves(pedigree),
-                   coefficients = "ibd",
+                   states = "ibd",
                    ibd_state = 1L,
                    chromosome_length = 267.77){
 
-  coeff <- ibdsegments::: .validate_coefficients(coefficients)
-  .check_ids_compatible_with_coeff(ids, coeff)
-  .validate_obs_compatible_with_coeff(ibd_state, "ibd_state", coeff)
+  states_idx <- ibdsegments::: .validate_states(states)
+  .check_ids_compatible_with_states_idx(ids, states_idx)
+  .validate_obs_compatible_with_states_idx(ibd_state, "ibd_state", states_idx)
   .validate_pedigree(pedigree, continuous_genome = TRUE)
 
   i <- inheritance_space(pedigree = pedigree, ids = ids,
-                         coefficients = coefficients)
+                         states = states)
 
   random_ibd(n = n, chromosome_length = chromosome_length,
              ibd_state_by_v = i$ibd_state_by_v,

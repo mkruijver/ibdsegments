@@ -13,7 +13,7 @@ compute_single_locus_relatedness_coefficients <- function(pedigree,
 
   setNames(sapply(values, function(x){
     d_ibd(ibd = x, pedigree = pedigree, ids = ids,
-           coefficients = coefficient)
+           states = coefficient)
   }),
   nm = paste0(coefficient_short_label[[coefficient]], values))
 }
@@ -35,7 +35,7 @@ compute_two_locus_relatedness_coefficients <- function(pedigree, recombination_r
     for (i2 in seq_along(values)){
       probabilities[i1, i2] <-  d_ibd(c(values[i1], values[i2]),
                                        recombination_rate_by_locus = recombination_rate,
-                                       pedigree = pedigree, ids = ids, coefficient = coefficient)
+                                       pedigree = pedigree, ids = ids, states = coefficient)
     }
   }
 
@@ -145,7 +145,7 @@ test_that("verify two locus Jacquard against ribd::twoLocusIdentity", {
 #                                        rho = 0.01, detailed = TRUE)
 #     observed <- compute_two_locus_relatedness_coefficients(ped,
 #                     recombination_rate = 0.01, ids = ids,
-#                     coefficient = "detailed")
+#                     states = "detailed")
 #
 #     expect_equal(observed, expected)
 #   }

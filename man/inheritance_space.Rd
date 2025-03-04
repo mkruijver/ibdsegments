@@ -4,12 +4,7 @@
 \alias{inheritance_space}
 \title{Inheritance space for pedigree}
 \usage{
-inheritance_space(
-  pedigree,
-  ids,
-  coefficients = "ibd",
-  exploit_symmetries = TRUE
-)
+inheritance_space(pedigree, ids, states = "ibd", exploit_symmetries = TRUE)
 }
 \description{
 The \code{inheritance_space} function determines the space of IBD vectors for a pedigree.

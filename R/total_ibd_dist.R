@@ -18,7 +18,7 @@
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
 #' @param fraction If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.
-#' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
+#' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
 #' @param convolve Should the distribution of the sum (across chromosomes) be obtained?
@@ -86,7 +86,7 @@
 total_ibd_dist <- function(pedigree,
                      ids = pedtools::leaves(pedigree),
                      fraction = FALSE,
-                     coefficients = "ibd",
+                     states = "ibd",
                      ibd_state = 1L,
                      chromosome_length = 267.77,
                      convolve = TRUE,
@@ -101,13 +101,13 @@ total_ibd_dist <- function(pedigree,
     stop("Chromosome_length needs to be strictly positive")
   }
 
-  coeff <- .validate_coefficients(coefficients)
-  .check_ids_compatible_with_coeff(ids, coeff)
-  .validate_obs_compatible_with_coeff(ibd_state, "ibd_state", coeff)
+  states_idx <- .validate_states(states)
+  .check_ids_compatible_with_states_idx(ids, states_idx)
+  .validate_obs_compatible_with_states_idx(ibd_state, "ibd_state", states_idx)
   .validate_pedigree(pedigree, continuous_genome = TRUE)
 
   i <- inheritance_space(pedigree = pedigree, ids = ids,
-                         coefficients = coefficients)
+                         states = states)
 
   lambda_max <- 0.01 * max(chromosome_length) * i$number_of_relevant_transmissions
   joint_n_max <- qpois(1.0 - 1e-16, lambda = lambda_max)
@@ -154,7 +154,7 @@ total_ibd_dist <- function(pedigree,
 
     dist_chromosome <- list(f_continuous = f_continuous,
                             fraction = fraction,
-                            coefficients = coefficients,
+                            states = states,
                             ibd_state = ibd_state,
                             low = 0,
                             up = scale,
@@ -313,7 +313,7 @@ print.ibd_dist = function(x, ...) {
   cat("Probability distribution of",
       if (x$fraction) "fraction" else "total length",
       "of segments in",
-      x$coefficients,
+      x$states,
       "state",
       x$ibd_state, " \n")
   cat("Chromosome length:", x$chromosome_length, "cM\n\n")

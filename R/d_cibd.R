@@ -4,11 +4,11 @@
 #' IBD segments on a chromosome.
 #'
 #' @param cM Numeric vector with lengths of segments (centiMorgan).
-#' @param ibd Integer vector. Taking values 0, 1, 2 for `coefficients = "ibd"` or `coefficients = "kappa"`, 1, ..., 9 for `coefficients="identity"` and 1, ..., 15 for `coefficients = "detailed"`.
+#' @param ibd Integer vector. Taking values 0, 1, 2 for `states = "ibd"` or `states = "kappa"`, 1, ..., 9 for `states="identity"` and 1, ..., 15 for `states = "detailed"`.
 #' @param r_cibd_result Optionally a result from [`r_cibd`] for which the probability density is evaluated.
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
-#' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
+#' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param log10 Should the log10 probability density be returned? Default is `FALSE`.
 #' @return Numeric
 #' @examples
@@ -68,18 +68,18 @@ d_cibd <- function(cM = r_cibd_result$length,
                          ibd = r_cibd_result$state,
                          pedigree, ids = pedtools::leaves(pedigree),
                          r_cibd_result,
-                         coefficients = "ibd",
+                         states = "ibd",
                          log10 = FALSE){
 
   # validate inputs
-  coeff <- .validate_coefficients(coefficients)
-  .check_ids_compatible_with_coeff(ids, coeff)
-  .validate_obs_compatible_with_coeff(ibd, "ibd", coeff)
+  states_idx <- .validate_states(states)
+  .check_ids_compatible_with_states_idx(ids, states_idx)
+  .validate_obs_compatible_with_states_idx(ibd, "ibd", states_idx)
   .validate_pedigree(pedigree, continuous_genome = TRUE)
   .validate_logical(log10, "log10")
 
   i <- inheritance_space(pedigree = pedigree, ids = ids,
-                         coefficients = coefficients)
+                         states = states)
 
   if (missing(r_cibd_result)){
     log10_pr <- log10_ibd_segment_pr_cpp(cM, ibd,

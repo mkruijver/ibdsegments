@@ -5,9 +5,8 @@
 
 The **ibdsegments** package offers functions related to identity by
 descent (IBD) probability for pedigree members. Both the discrete case
-(identity coefficients) and the continuous case (segments length) are
-treated using a Hidden Markov Model (HMM) approach. Key functionality
-includes:
+(identity states) and the continuous case (segment lengths) are treated
+using a Hidden Markov Model (HMM) approach. Key functionality includes:
 
 - Computing identity coefficients for two pedigree members
 - Random sampling of IBD segments
@@ -35,25 +34,25 @@ example shows how to compute the `kappa` coefficients for half siblings.
 ``` r
 ped_hs <- pedtools::halfSibPed()
 
-d_ibd(0, pedigree = ped_hs, coefficients = "kappa")
+d_ibd(0, pedigree = ped_hs, states = "kappa")
 #> [1] 0.5
-d_ibd(1, pedigree = ped_hs, coefficients = "kappa")
+d_ibd(1, pedigree = ped_hs, states = "kappa")
 #> [1] 0.5
 ```
 
-Besides `kappa`, other identity coefficients supported include:
+Besides `kappa`, other identity states supported include:
 
 - `ibd`: 0, 1, or 2 whenever all selected pedigree members jointly share
   this number of founder allele labels
-- `identity`: Jacquard’s 9 condensed identity coefficients
-- `detailed`: the 15 detailed identity coefficients
+- `identity`: Jacquard’s 9 condensed identity states
+- `detailed`: the 15 detailed identity states
 
 For example, the inbreeding coefficient may be computed as an `ibd`
 state for a single pedigree member.
 
 ``` r
 ped_inbred <- pedtools::fullSibMating(n = 1)
-d_ibd(ibd = 1, pedigree = ped_inbred, ids = 5, coefficients = "ibd")
+d_ibd(ibd = 1, pedigree = ped_inbred, ids = 5, states = "ibd")
 #> [1] 0.25
 ```
 
@@ -62,7 +61,7 @@ easily computed using the `d_ibd` function.
 
 ``` r
 ped_3fs <- pedtools::nuclearPed(nch = 3)
-d_ibd(ibd = 2, pedigree = ped_3fs, coefficients = "ibd")
+d_ibd(ibd = 2, pedigree = ped_3fs, states = "ibd")
 #> [1] 0.0625
 ```
 
@@ -76,7 +75,7 @@ sampling of continuous IBD:
 
 ``` r
 set.seed(1)
-r_cibd(n = 1, pedigree = ped_hs, coefficients = "kappa", chromosome_length = 100)
+r_cibd(n = 1, pedigree = ped_hs, states = "kappa", chromosome_length = 100)
 #> $samples
 #>   sample chromosome    start       end    length state
 #> 1      1          1  0.00000  59.08214 59.082139     1
@@ -159,8 +158,8 @@ d_hs_full_conv
 #> Weight of continuous density: 1 
 #> 
 #> Point masses: 
-#>  x           px
-#>  0 8.321233e-37
+#> [1] x  px
+#> <0 rows> (or 0-length row.names)
 plot(d_hs_full_conv)
 ```
 

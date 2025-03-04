@@ -7,7 +7,7 @@
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
 #' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
 #' @param fraction If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.
-#' @param coefficients One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
+#' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
 #' @return `list`
@@ -39,7 +39,7 @@
 total_ibd_dist_moments <- function(pedigree,
                                      ids = pedtools::leaves(pedigree),
                                      fraction = FALSE,
-                                     coefficients = "ibd",
+                                     states = "ibd",
                                      ibd_state = 1L,
                                      chromosome_length = 267.77){
 
@@ -56,13 +56,13 @@ total_ibd_dist_moments <- function(pedigree,
   }
 
 
-  coeff <- .validate_coefficients(coefficients)
-  .check_ids_compatible_with_coeff(ids, coeff)
-  .validate_obs_compatible_with_coeff(ibd_state, "ibd_state", coeff)
+  states_idx <- .validate_states(states)
+  .check_ids_compatible_with_states_idx(ids, states_idx)
+  .validate_obs_compatible_with_states_idx(ibd_state, "ibd_state", states_idx)
   .validate_pedigree(pedigree, continuous_genome = TRUE)
 
   i <- inheritance_space(pedigree = pedigree, ids = ids,
-                         coefficients = coefficients)
+                         states = states)
 
 
   # expectation of square of indicator function

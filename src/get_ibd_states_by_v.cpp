@@ -1,11 +1,11 @@
 #include <Rcpp.h>
 using namespace Rcpp;
 
-const int COEFF_IBD = 1;
-const int COEFF_KAPPA = 2;
-const int COEFF_IDENTITY = 9;
-const int COEFF_DETAILED = 15;
-const int COEFF_V = 99;
+const int STATES_IBD = 1;
+const int STATES_KAPPA = 2;
+const int STATES_IDENTITY = 9;
+const int STATES_DETAILED = 15;
+const int STATES_V = 99;
 
 // [[Rcpp::export]]
 int get_ibd_state_1p(const IntegerVector &x, const int id_idx){
@@ -206,10 +206,10 @@ int get_detailed_Jacquard_state(IntegerVector x, int id_idx1, int id_idx2){
 }
 
 // [[Rcpp::export]]
-int get_ibd_state(IntegerVector &x, int coeff, IntegerVector &ids_idx){
+int get_ibd_state(IntegerVector &x, int states_idx, IntegerVector &ids_idx){
 
-  switch(coeff){
-  case COEFF_IBD:
+  switch(states_idx){
+  case STATES_IBD:
     if (ids_idx.size() == 1){
       return get_ibd_state_1p(x, ids_idx[0]);
     }
@@ -219,14 +219,14 @@ int get_ibd_state(IntegerVector &x, int coeff, IntegerVector &ids_idx){
     else{
       return get_joint_ibd_state(x, ids_idx);
     }
-  case COEFF_KAPPA:
+  case STATES_KAPPA:
     return get_kappa_state(x, ids_idx[0], ids_idx[1]);
-  case COEFF_IDENTITY:
+  case STATES_IDENTITY:
     return get_Jacquard_state(x, ids_idx[0], ids_idx[1]);
-  case COEFF_DETAILED:
+  case STATES_DETAILED:
     return get_detailed_Jacquard_state(x, ids_idx[0], ids_idx[1]);
   default:
-    Rcpp::stop("Unknown ibd coeff");
+    Rcpp::stop("Unknown ibd states_idx");
   }
 }
 
@@ -334,7 +334,7 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
                                   IntegerVector ids_idx,
                                   int number_of_fixed_transmissions,
                                   IntegerVector top_to_bottom_order,
-                                  int coeff){
+                                  int states_idx){
 
   // reserve return value
   int number_of_transmissions = from_allele_idx.size();
@@ -348,7 +348,7 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
 
   IntegerVector ibd_states(number_of_canonical_inheritance_vectors);
 
-  if (coeff != COEFF_V){
+  if (states_idx != STATES_V){
     // assign allele vector
     IntegerVector x = assign_founder_alleles(number_of_ped_members, ped_row_is_founder_idx);
 
@@ -367,7 +367,7 @@ IntegerVector get_ibd_states_by_v(int number_of_ped_members,
                       to_allele_idx_0based, number_of_non_fixed_transmissions);
 
       // obtain ibd state for this inheritance vector
-      ibd_states[v] = get_ibd_state(x, coeff, ids_idx);
+      ibd_states[v] = get_ibd_state(x, states_idx, ids_idx);
     }
   }else{
     ibd_states = Rcpp::seq(0, number_of_canonical_inheritance_vectors - 1);
