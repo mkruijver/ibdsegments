@@ -8,12 +8,26 @@ descent (IBD) probability for pedigree members. Both the discrete case
 (identity states) and the continuous case (segment lengths) are treated
 using a Hidden Markov Model (HMM) approach. Key functionality includes:
 
-- Computing identity coefficients for two pedigree members
+- Computing identity coefficients
 - Random sampling of IBD segments
-- Obtaining the full probability distribution of the fraction (or total
-  length) of an autosome that is IBD between two or more pedigree
-  members
-- Convolution of IBD distributions using the FFT
+- Full probability distributions of IBD sharing
+- FFT-based convolution of IBD distributions
+
+The main advantage of this approach is the flexibility to define complex
+IBD states such as IBD among more than two pedigree members. However, it
+is limited to relatively small pedigrees, as the state space grows
+exponentially with the number of non-founders in the pedigree.
+
+## Installation
+
+The **ibdsegments** package is still in development and not yet
+available from CRAN. You can install the **ibdsegments** package using
+the [`pak`](https://pak.r-lib.org/) package in R:
+
+``` r
+# install.packages("pak")
+pak::pak("mkruijver/ibdsegments")
+```
 
 ## Getting started
 
@@ -116,7 +130,7 @@ admits a density function otherwise. A plot includes both components.
 plot(d_hs)
 ```
 
-<img src="man/figures/README-unnamed-chunk-8-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-9-1.png" style="display: block; margin: auto;" />
 Utility functions for computing the expectation, variance and standard
 deviation of the distributions are also available. These functions use
 numerical integration.
@@ -140,7 +154,7 @@ d_hs_conv <- total_ibd_dist(ped_hs,
 plot(d_hs_conv)
 ```
 
-<img src="man/figures/README-unnamed-chunk-10-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
 
 Because the number of point masses may increase quickly, by default any
 point mass below `1e-9` is removed.
@@ -163,4 +177,4 @@ d_hs_full_conv
 plot(d_hs_full_conv)
 ```
 
-<img src="man/figures/README-unnamed-chunk-11-1.png" style="display: block; margin: auto;" />
+<img src="man/figures/README-unnamed-chunk-12-1.png" style="display: block; margin: auto;" />

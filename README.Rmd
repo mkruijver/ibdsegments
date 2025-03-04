@@ -18,10 +18,22 @@ knitr::opts_chunk$set(
 
 The **ibdsegments** package offers functions related to identity by descent (IBD) probability for pedigree members. Both the discrete case (identity states) and the continuous case (segment lengths) are treated using a Hidden Markov Model (HMM) approach. Key functionality includes:
 
--   Computing identity coefficients for two pedigree members
--   Random sampling of IBD segments
--   Obtaining the full probability distribution of the fraction (or total length) of an autosome that is IBD between two or more pedigree members
--   Convolution of IBD distributions using the FFT
+* Computing identity coefficients
+* Random sampling of IBD segments
+* Full probability distributions of IBD sharing
+* FFT-based convolution of IBD distributions
+
+The main advantage of this approach is the flexibility to define complex IBD states such as IBD among more than two pedigree members. However, it is limited to relatively small pedigrees, as the state space grows exponentially with the number of non-founders in the pedigree.
+
+## Installation  
+
+The **ibdsegments** package is still in development and not yet available from CRAN. You can install the **ibdsegments** package using the [`pak`](https://pak.r-lib.org/) package in R:
+
+```{r}
+#| eval: false
+# install.packages("pak")
+pak::pak("mkruijver/ibdsegments")
+```
 
 ## Getting started
 ```{r}
