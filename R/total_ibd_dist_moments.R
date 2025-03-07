@@ -51,10 +51,11 @@ total_ibd_dist_moments <- function(pedigree,
   if (any(chromosome_length <= 0)){
     stop("Chromosome_length needs to be strictly positive")
   }
-  if (length(chromosome_length) != 1){
-    stop("Chromosome_length needs to have length 1")
+  if (length(chromosome_length) < 1){
+    stop("Chromosome_length needs to have length 1 or more")
   }
 
+  .validate_logical(fraction, "fraction")
 
   states_idx <- .validate_states(states)
   .check_ids_compatible_with_states_idx(ids, states_idx)
@@ -71,22 +72,6 @@ total_ibd_dist_moments <- function(pedigree,
 
   ii <- rep(ibd_state, 2)
 
-  E_I_squared <- 1 / (0.5 * chromosome_length^2) *
-    integrate(f = Vectorize(function(x){
-      integrate(f = Vectorize(function(y) {
-
-        rho <-  0.5 * (1 - exp(-2 * 0.01* (x - y)))
-
-        10^sum(ibd_log10_pr_cpp(ibd_state_by_v = i$ibd_state_by_v,
-                             ibd_by_locus = ii,
-                             recombination_rate_by_locus = rho,
-                             number_of_transmissions = i$number_of_relevant_transmissions,
-                             fixed_transmission_masks = i$relevant_masks,
-                             pr_v_constant = pr_v_constant,
-                             pr_v_biased = pr_v))
-      }), lower = 0, upper = x)$val
-    }), lower = 0, upper = chromosome_length)$val
-
   E_I <- 10^ibd_log10_pr_cpp(ibd_state_by_v = i$ibd_state_by_v,
                           ibd_by_locus = ibd_state,
                           recombination_rate_by_locus = numeric(),
@@ -95,10 +80,32 @@ total_ibd_dist_moments <- function(pedigree,
                           pr_v_constant = pr_v_constant,
                           pr_v_biased = pr_v)
 
-  scale <- if(fraction) 1.0 else chromosome_length
+  E_I_squared <- sapply(chromosome_length, function(l){
+    1 / (0.5 * l^2) *
+      integrate(f = Vectorize(function(x){
+        integrate(f = Vectorize(function(y) {
 
-  mean <- E_I * scale
-  var <- scale^2 * E_I_squared - (E_I*scale)^2
+          rho <-  0.5 * (1 - exp(-2 * 0.01* (x - y)))
+
+          10^sum(ibd_log10_pr_cpp(ibd_state_by_v = i$ibd_state_by_v,
+                                  ibd_by_locus = ii,
+                                  recombination_rate_by_locus = rho,
+                                  number_of_transmissions = i$number_of_relevant_transmissions,
+                                  fixed_transmission_masks = i$relevant_masks,
+                                  pr_v_constant = pr_v_constant,
+                                  pr_v_biased = pr_v))
+        }), lower = 0, upper = x)$val
+      }), lower = 0, upper = l)$val
+  })
+
+
+  mean_length <- E_I * sum(chromosome_length)
+  var_length <- sum(chromosome_length^2 * E_I_squared - (E_I * chromosome_length)^2)
+
+  scale <- if (fraction) sum(chromosome_length) else 1.0
+
+  mean <- mean_length / scale
+  var <- var_length / scale^2
   sd <- sqrt(var)
 
   list(mean = mean,
