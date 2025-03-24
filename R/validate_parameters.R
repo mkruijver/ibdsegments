@@ -122,10 +122,30 @@
 
 .validate_integer <- function(x, argument_name){
   if (!is.integer(x)){
-    stop(argument_name, " should be an integer vector")
+    if (is.numeric(x)){
+      x_as_integer <- as.integer(x)
+
+      if (isTRUE(all.equal(x, x_as_integer))){
+        return()
+      }
+    }
   }
+  else{
+    return()
+  }
+
+  stop(argument_name, " should be an integer vector")
 }
 
+.validate_chromosome_length <- function(chromosome_length){
+  if (!is.numeric(chromosome_length)){
+    stop("chromosome_length needs to be numeric")
+  }
+
+  if (any(chromosome_length <= 0)){
+    stop("chromosome_length needs to be strictly positive")
+  }
+}
 
 .validate_numeric <- function(x, argument_name){
   if (!is.numeric(x)){

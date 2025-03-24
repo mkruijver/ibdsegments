@@ -1,4 +1,4 @@
-#' @import Rcpp
+#' @import Rcpp expm
 #' @useDynLib ibdsegments, .registration = TRUE
 #' @keywords internal
 "_PACKAGE"
