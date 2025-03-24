@@ -93,13 +93,7 @@ total_ibd_dist <- function(pedigree,
                      ...){
 
   # validate inputs
-  if (!is.numeric(chromosome_length)){
-    stop("Chromosome_length needs to be numeric")
-  }
-
-  if (any(chromosome_length <= 0)){
-    stop("Chromosome_length needs to be strictly positive")
-  }
+  .validate_chromosome_length(chromosome_length)
 
   states_idx <- .validate_states(states)
   .check_ids_compatible_with_states_idx(ids, states_idx)
