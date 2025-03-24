@@ -65,7 +65,6 @@
 d_cibd <- function(x,
                    ibd,
                    pedigree, ids = pedtools::leaves(pedigree),
-                   r_cibd_result,
                    states = "ibd",
                    log10 = FALSE){
 
