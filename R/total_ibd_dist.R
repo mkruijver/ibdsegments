@@ -9,10 +9,10 @@
 #'
 #' If `convolve=TRUE` (the default) and `chromosome_length` has length
 #' greater than one, the convolution of the distributions will be obtained
-#' by FFT using the [`convolve_ibd_dists`] function. Convolution will
+#' by FFT using the [`convolve_total_ibd_dists`] function. Convolution will
 #' typically produce a rapidly increasing number of point masses
 #' with very small probabilities which are discarded if the
-#' probability falls below a threshold of `1e-9`; see [`convolve_ibd_dists`]
+#' probability falls below a threshold of `1e-9`; see [`convolve_total_ibd_dists`]
 #' for details and finer control.
 #'
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
@@ -22,7 +22,7 @@
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
 #' @param convolve Should the distribution of the sum (across chromosomes) be obtained?
-#' @param ... Additional parameters passed to [`convolve_ibd_dists`] when `convolve=TRUE`.
+#' @param ... Additional parameters passed to [`convolve_total_ibd_dists`] when `convolve=TRUE`.
 #' @return object of class `ibd_dist`
 #' @examples
 #' ## Total IBD and fraction of IBD for a cousin relationship
@@ -175,7 +175,7 @@ total_ibd_dist <- function(pedigree,
       point_mass_eps <- args_list$point_mass_eps
     }
 
-    return(convolve_ibd_dists(fs, point_mass_eps = point_mass_eps,
+    return(convolve_total_ibd_dists(fs, point_mass_eps = point_mass_eps,
                               number_of_gridpoints_exponent = number_of_gridpoints_exponent))
   }
 

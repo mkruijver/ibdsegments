@@ -1,12 +1,12 @@
 #' Convolve IBD distributions to obtain the distribution of the sum
 #'
 #' Chromosome-wise IBD distributions obtained from the `total_ibd_dist`
-#' function can be convoluted manually using the `convolve_ibd_dists`
+#' function can be convoluted manually using the `convolve_total_ibd_dists`
 #' function. This allows finer control of the procedure by controlling
 #' the number of gridpoints used in the FFT and the threshold for
 #' point masses to be retained.
 #'
-#' The `convolve_ibd_dist` implements a convolution procedure based on a self
+#' The `convolve_total_ibd_dists` implements a convolution procedure based on a self
 #' contained variant of the recipe implemented in the `distr` package adapted
 #' to this use case. In particular, the IBD distribution for one
 #' chromosome is often a mixture of two point masses and continuous with finite
@@ -43,7 +43,7 @@
 #' d1 <- total_ibd_dist(pedigree = ped_hs, chromosome_length = 267.77)
 #' d2 <- total_ibd_dist(pedigree = ped_hs, chromosome_length = 251.73)
 #'
-#' convolve_ibd_dists(d1, d2) # 4 point masses
+#' convolve_total_ibd_dists(d1, d2) # 4 point masses
 #'
 #' ## Accuracy of convolution depends on number of gridpoints
 #'
@@ -61,9 +61,9 @@
 #'
 #' # .. or by summing the distributions with varying numbers of gridpoints
 #' k <- 6:10
-#' sd_hat_by_k <- sapply(k, function(k) sd(convolve_ibd_dists(hs,
+#' sd_hat_by_k <- sapply(k, function(k) sd(convolve_total_ibd_dists(hs,
 #'                                         number_of_gridpoints_exponent = k)))
-#' mean_hat_by_k <- sapply(k, function(k) E(convolve_ibd_dists(hs,
+#' mean_hat_by_k <- sapply(k, function(k) E(convolve_total_ibd_dists(hs,
 #'                                         number_of_gridpoints_exponent = k)))
 #'
 #' plot(k, mean_hat_by_k)
@@ -72,7 +72,7 @@
 #' plot(k, sd_hat_by_k)
 #' abline(h = sd_hat, lty = 2)
 #' @export
-convolve_ibd_dists <- function(...,
+convolve_total_ibd_dists <- function(...,
                                point_mass_eps = 1e-9,
                                number_of_gridpoints_exponent = 12){
   x <- list(...)
