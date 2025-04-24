@@ -223,18 +223,8 @@ E.ibd_dist <- function(x, m = 1){
 }
 
 #' @export
-var <- function(x, ...){
-  UseMethod("var")
-}
-
-#' @export
 var.ibd_dist <- function(x){
   E.ibd_dist(x, m = 2) - E.ibd_dist(x)^2
-}
-
-#' @export
-sd <- function(x, ...){
-  UseMethod("sd")
 }
 
 #' @export
