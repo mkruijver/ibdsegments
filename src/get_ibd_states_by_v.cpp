@@ -46,8 +46,8 @@ int get_kappa_state(const IntegerVector &x, const int id_idx1, const int id_idx2
   int c = x[2 * id_idx2 - 2];
   int d = x[2 * id_idx2 - 1];
 
-  if (a==b) return 0;
-  if (c==d) return 0;
+  if (a==b) return NA_INTEGER;
+  if (c==d) return NA_INTEGER;
 
   int kappa = (a == c) + (a == d) + (b == c) + (b == d);
 
