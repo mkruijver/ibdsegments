@@ -14,5 +14,5 @@ LinkingTo:
 Imports: 
     Rcpp, pedtools, expm
 Suggests: 
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0), ribd, ggplot2
 Config/testthat/edition: 3
