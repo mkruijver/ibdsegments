@@ -92,7 +92,7 @@ segment_count_dist <- function(pedigree,
   })
 
   if (length(chromosome_dists) > 1 && convolve){
-    return(convolve_segment_count_dists(chromosome_dists, ...))
+    return(convolve_segment_count_dists(chromosome_dists))
   }
 
   if (length(chromosome_length) == 1){
