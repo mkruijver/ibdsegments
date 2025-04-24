@@ -22,20 +22,20 @@ test_that("compare to manual values for ibd", {
 
 test_that("compare to manual values for kappa", {
 
-  expect_equal(get_kappa_state(c(1,1,1,1), 1, 2), 0)
-  expect_equal(get_kappa_state(c(1,1,1,2), 1, 2), 0)
-  expect_equal(get_kappa_state(c(1,1,2,1), 1, 2), 0)
-  expect_equal(get_kappa_state(c(1,1,2,2), 1, 2), 0)
+  expect_equal(get_kappa_state(c(1,1,1,1), 1, 2), NA_integer_)
+  expect_equal(get_kappa_state(c(1,1,1,2), 1, 2), NA_integer_)
+  expect_equal(get_kappa_state(c(1,1,2,1), 1, 2), NA_integer_)
+  expect_equal(get_kappa_state(c(1,1,2,2), 1, 2), NA_integer_)
 
-  expect_equal(get_kappa_state(c(1,2,1,1), 1, 2), 0)
+  expect_equal(get_kappa_state(c(1,2,1,1), 1, 2), NA_integer_)
   expect_equal(get_kappa_state(c(1,2,1,2), 1, 2), 2)
   expect_equal(get_kappa_state(c(1,2,1,3), 1, 2), 1)
   expect_equal(get_kappa_state(c(1,2,2,1), 1, 2), 2)
-  expect_equal(get_kappa_state(c(1,2,2,2), 1, 2), 0)
+  expect_equal(get_kappa_state(c(1,2,2,2), 1, 2), NA_integer_)
   expect_equal(get_kappa_state(c(1,2,2,3), 1, 2), 1)
   expect_equal(get_kappa_state(c(1,2,3,1), 1, 2), 1)
   expect_equal(get_kappa_state(c(1,2,3,2), 1, 2), 1)
-  expect_equal(get_kappa_state(c(1,2,3,3), 1, 2), 0)
+  expect_equal(get_kappa_state(c(1,2,3,3), 1, 2), NA_integer_)
 
   expect_equal(get_kappa_state(c(1,2,3,4), 1, 2), 0)
 
