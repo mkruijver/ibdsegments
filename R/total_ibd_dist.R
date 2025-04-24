@@ -190,6 +190,7 @@ d <- function(x, ...){
   UseMethod("d")
 }
 
+#' @method d ibd_dist
 #' @export
 d.ibd_dist <- function(x){
   x$f_continuous
@@ -200,6 +201,7 @@ E <- function(x, ...){
   UseMethod("E")
 }
 
+#' @method E ibd_dist
 #' @export
 E.ibd_dist <- function(x, m = 1){
 

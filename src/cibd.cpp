@@ -147,6 +147,45 @@ NumericVector q_step(const NumericVector &a0, const int number_of_transmissions,
   return a_next;
 }
 
+// [[Rcpp::export]]
+NumericMatrix Q_matrix(const int number_of_transmissions,
+                     const int number_of_fixed_transmissions,
+                     const IntegerVector &masks) {
+
+  int number_of_non_fixed_transmissions = number_of_transmissions -
+    number_of_fixed_transmissions;
+
+  double rate = 0.01;
+
+  int number_of_v = 1 << number_of_non_fixed_transmissions;
+
+  NumericMatrix Q(number_of_v, number_of_v);
+
+  for (int v = 0; v < number_of_v; v++){
+    double rate_out = 0;
+
+    // flip all bits
+    for (int i = 0; i < number_of_non_fixed_transmissions; i++){
+      int w = v ^ (1 << i);
+
+      Q(v, w) += rate;
+      rate_out += rate;
+    }
+
+    // founder symmetry
+    for (int i = 0; i < number_of_fixed_transmissions; i++){
+      int w = v ^ masks[i];
+
+      Q(v, w) += rate;
+      rate_out += rate;
+    }
+
+    Q(v, v) = -rate_out;
+  }
+
+  return Q;
+}
+
 double rate_instant_move(NumericVector alpha,
                          int from_ibd_state,
                          int number_of_transmissions,
@@ -251,6 +290,69 @@ void one_F_step(const NumericMatrix F,
 }
 
 // [[Rcpp::export]]
+void one_F_step_segment_count(const NumericMatrix F,
+                NumericMatrix F_next,
+                const int stay_in_ibd,
+                const IntegerVector ibd_state_by_v,
+                const int number_of_transmissions,
+                const int number_of_fixed_transmissions,
+                const IntegerVector unique_masks,
+                const IntegerVector unique_masks_count){
+
+  F_next.fill(0.0);
+  double pr = 1.0 / number_of_transmissions;
+
+  int number_of_non_fixed_transmissions = number_of_transmissions -
+    number_of_fixed_transmissions;
+
+  int n_row = F.nrow();
+  int n_col = F.ncol();
+
+  int number_of_unique_masks = unique_masks.size();
+
+  for (int v = 0; v < n_row; v++){
+
+    bool was_not_in_ibd = ibd_state_by_v[v] != stay_in_ibd;
+
+    for(int k = 0; k < n_col - 1; k++){
+      double F_v_k = F(v, k);
+      if (F_v_k == 0) continue;
+
+      double F_v_k_times_pr = F_v_k * pr;
+
+      // flip all bits
+      for (int i = 0; i < number_of_non_fixed_transmissions; i++){
+
+        int w = v ^ (1 << i);
+
+        bool goes_to_ibd = ibd_state_by_v[w] == stay_in_ibd;
+        int delta = (was_not_in_ibd && goes_to_ibd) ? 1 : 0;
+
+        F_next(w, k + delta) += F_v_k_times_pr;
+        // if (k ==0){
+        //   Rcpp::Rcout << "v = " << v << " k = " << k << " w = " << w
+        //   << " delta = " << delta << "\n";
+        // }
+      }
+
+      // founder symmetry
+      for (int i = 0; i < number_of_unique_masks; i++){
+        int w = v ^ unique_masks[i];
+        bool goes_to_ibd = ibd_state_by_v[w] == stay_in_ibd;
+        int delta = (was_not_in_ibd && goes_to_ibd) ? 1 : 0;
+
+        F_next(w, k + delta) += F_v_k_times_pr * unique_masks_count[i];
+
+        // if (k ==0){
+        //   Rcpp::Rcout << "v = " << v << " k = " << k << " w = " << w
+        //               << " delta = " << delta << "\n";
+        // }
+      }
+    }
+  }
+}
+
+// [[Rcpp::export]]
 List get_unique_masks_and_count(IntegerVector masks){
 
   std::vector<int> unique_masks;
@@ -309,6 +411,51 @@ NumericMatrix pr_number_of_intervals_in_state_by_n(int ibd_state,
   // having spent m (col) intervals in the ibd state
   for (int n = 1; n <= n_max; n++){
     one_F_step(F_current, F_next, ibd_state, ibd_state_by_v,
+               number_of_transmissions, masks.size(),
+               unique_masks, unique_masks_count);
+
+    // marginalise
+    V(_, n) = Rcpp::colSums(F_next);
+
+    std::swap(F_current, F_next);
+  }
+
+  return V;
+}
+
+
+// [[Rcpp::export]]
+NumericMatrix pr_number_of_segments_by_n(int ibd_state,
+                                                   IntegerVector ibd_state_by_v,
+                                                   int n_max,
+                                                   int number_of_transmissions,
+                                                   IntegerVector masks){
+  // compute the probability distribution of k = 0, 1, 2, ... n_max+1 IBD segments
+  // if there are n = 0, 1, 2, ..., n_max recombinations
+  NumericMatrix V(n_max + 2, n_max + 1);
+
+  int number_of_states = ibd_state_by_v.size();
+  NumericMatrix F_current(number_of_states, n_max + 2);
+  NumericMatrix F_next(number_of_states, n_max + 2);
+
+  // each v is equally probable at start
+  double pr_v = 1.0 / ibd_state_by_v.size();
+  for (int v = 0; v < ibd_state_by_v.size(); v++){
+    int delta = (ibd_state_by_v[v] == ibd_state) ? 1 : 0;
+    F_current(v, delta) += pr_v;
+    V(delta, 0) += pr_v;
+  }
+
+  // in many pedigrees the masks are not uniqe so we can optimise a bit
+  // by only considering the unique ones in the computations
+  List unique_masks_and_count = get_unique_masks_and_count(masks);
+  IntegerVector unique_masks = unique_masks_and_count[0];
+  IntegerVector unique_masks_count = unique_masks_and_count[1];
+
+  // recursively compute F: joint pr. of being in state v (row) and
+  // m (col) segments in the ibd state
+  for (int n = 1; n <= n_max; n++){
+    one_F_step_segment_count(F_current, F_next, ibd_state, ibd_state_by_v,
                number_of_transmissions, masks.size(),
                unique_masks, unique_masks_count);
 
