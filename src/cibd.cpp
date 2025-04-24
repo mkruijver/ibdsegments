@@ -52,9 +52,6 @@ NumericVector p_step(const NumericVector& a0,
                      const int number_of_transmissions,
                      const int number_of_fixed_transmissions) {
 
-  int number_of_non_fixed_transmissions = number_of_transmissions - number_of_fixed_transmissions;
-  double pr = 1.0 / number_of_transmissions;
-
   int min_number_of_crossovers = R::qpois(1e-16 / 2, lambda, 1, 0);
   int max_number_of_crossovers = R::qpois(1.0 - 1e-16, lambda, 1, 0);
 
@@ -361,7 +358,8 @@ List get_unique_masks_and_count(IntegerVector masks){
     int mask = masks[i_mask];
     bool found = false;
 
-    for (int j = 0; j < unique_masks.size(); j++) {
+    int unique_masks_size = unique_masks.size();
+    for (int j = 0; j < unique_masks_size; j++) {
       if (unique_masks[j] == mask) {
         unique_masks_count[j]++;
         found = true;
@@ -490,8 +488,6 @@ NumericVector pr_stay_and_leave(int stay_in_ibd,
       a_prev[v] = 1.0 / num_matching;
     }
   }
-
-  double pr = 1.0 / number_of_transmissions;
 
   // 0 steps
   pr_stay_and_leave[0] = 1 * rate_instant_move(a_prev, stay_in_ibd,

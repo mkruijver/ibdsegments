@@ -633,7 +633,6 @@ DataFrame multi_ibd_patterns_df(NumericVector prob,
                                 CharacterVector ids){
 
   int number_of_ids = ids.size();
-  int number_of_patterns = unique_patterns.ncol();
 
   if (unique_patterns.nrow() != 2 * number_of_ids){
     Rcpp::stop("unique_patterns and ids have incompatible dimensions");
