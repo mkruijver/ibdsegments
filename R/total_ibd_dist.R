@@ -236,7 +236,7 @@ sd.ibd_dist <- function(x, ...){
   sqrt(var.ibd_dist(x))
 }
 
-#' @importFrom graphics par plot curve grid point axis mtext
+#' @importFrom graphics par plot curve grid points axis mtext
 #' @export
 plot.ibd_dist <- function(x, ...){
 
