@@ -30,6 +30,7 @@
 #' details.
 #'
 #' @param ... ibd dists.
+#' @param point_mass_eps Point masses smaller than this value are discarded.
 #' @param number_of_gridpoints_exponent Default is 12.
 #' @return ibd_dist
 #' @examples
