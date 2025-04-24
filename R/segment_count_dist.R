@@ -40,12 +40,12 @@ segment_count_dist <- function(pedigree,
                            convolve = TRUE){
 
   # validate inputs
-  ibdsegments:::.validate_chromosome_length(chromosome_length)
+  .validate_chromosome_length(chromosome_length)
 
-  states_idx <- ibdsegments:::.validate_states(states)
-  ibdsegments:::.check_ids_compatible_with_states_idx(ids, states_idx)
-  ibdsegments:::.validate_obs_compatible_with_states_idx(ibd_state, "ibd_state", states_idx)
-  ibdsegments:::.validate_pedigree(pedigree, continuous_genome = TRUE)
+  states_idx <- .validate_states(states)
+  .check_ids_compatible_with_states_idx(ids, states_idx)
+  .validate_obs_compatible_with_states_idx(ibd_state, "ibd_state", states_idx)
+  .validate_pedigree(pedigree, continuous_genome = TRUE)
 
   i <- inheritance_space(pedigree = pedigree, ids = ids,
                          states = states)
@@ -60,7 +60,7 @@ segment_count_dist <- function(pedigree,
 
   # compute the probability distribution of k = 0, 1, 2, ... n_max+1 IBD segments
   # if there are n = 0, 1, 2, ..., n_max recombinations
-  V <- ibdsegments:::pr_number_of_segments_by_n(ibd_state = ibd_state,
+  V <- pr_number_of_segments_by_n(ibd_state = ibd_state,
                                             ibd_state_by_v = i$ibd_state_by_v, n_max = joint_n_max,
                                             number_of_transmissions = i$number_of_relevant_transmissions,
                                             masks = i$relevant_masks)

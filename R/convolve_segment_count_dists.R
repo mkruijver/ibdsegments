@@ -21,11 +21,11 @@ convolve_segment_count_dists <- function(...){
 }
 
 convolve_two_segment_count_dists <- function(d1, d2){
-  dist_sum <- ibdsegments:::pmf_of_sum(x1 = d1$x,
-                           p1 = d1$px,
-                           x2 = d2$x,
-                           p2 = d2$px,
-                           eps = .Machine$double.xmin)
+  dist_sum <- pmf_of_sum(x1 = d1$x,
+                         p1 = d1$px,
+                         x2 = d2$x,
+                         p2 = d2$px,
+                         eps = .Machine$double.xmin)
 
 
   class(dist_sum) <- "segment_count_dist"
