@@ -95,6 +95,7 @@ convolve_ibd_dists <- function(...,
   partial_sum
 }
 
+#' @importFrom stats fft approxfun
 convolve_two_ibd_dists <- function(d1, d2, point_mass_eps, number_of_gridpoints_exponent){
   .validate_ibs_dist(d1)
   .validate_ibs_dist(d2)
@@ -132,13 +133,13 @@ convolve_two_ibd_dists <- function(d1, d2, point_mass_eps, number_of_gridpoints_
   dp2_padded <- c(dp2, numeric(n_gridpoints))
 
   # step 4: transform
-  f1_hat <- fft(dp1_padded)
-  f2_hat <- fft(dp2_padded)
+  f1_hat <- stats::fft(dp1_padded)
+  f2_hat <- stats::fft(dp2_padded)
 
   # convolution in Fourier domain
   f12_hat <- f1_hat * f2_hat
 
-  d_sum_cont <- c(0, Re(fft(f12_hat, inverse = TRUE)) / length(f1_hat)) / h
+  d_sum_cont <- c(0, Re(stats::fft(f12_hat, inverse = TRUE)) / length(f1_hat)) / h
 
   # blitz out artefacts
   d_sum_cont[d_sum_cont < .Machine$double.eps] <- 0.
@@ -179,7 +180,7 @@ convolve_two_ibd_dists <- function(d1, d2, point_mass_eps, number_of_gridpoints_
   sum_lower <- x_grid[find_index_of_first_non_zero(d_sum, eps = .Machine$double.eps)]
   sum_upper <- x_grid[find_index_of_last_non_zero(d_sum, eps = .Machine$double.eps)]
 
-  f_sum <- approxfun(x = x_grid, y = d_sum, yleft = 0, yright = 0)
+  f_sum <- stats::approxfun(x = x_grid, y = d_sum, yleft = 0, yright = 0)
 
   new_length <-  c(d1$chromosome_length,
                    d2$chromosome_length)
@@ -205,6 +206,7 @@ discretise_pdf <- function(f, low, up, n_gridpoints){
   approxfun(x = xx, y = dx, yleft = 0, yright = 0)
 }
 
+#' @importFrom stats approxfun
 integrate_pdf_to_cdf <- function(f, low, up, n_gridpoints){
   # this is distr:::.D2P
 
@@ -217,7 +219,7 @@ integrate_pdf_to_cdf <- function(f, low, up, n_gridpoints){
   p_less_than <- cumulative_simpson_cpp(dx)
   p_less_than <- p_less_than / max(p_less_than)
 
-  approxfun(x = x_less_than, y = p_less_than,
+  stats::approxfun(x = x_less_than, y = p_less_than,
             yleft = 0, yright = 1)
 }
 

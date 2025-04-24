@@ -1,7 +1,7 @@
-STATES_BY_NAME <- setNames(c(1L, 2L, 9L, 15L, 99L),
+STATES_BY_NAME <- stats::setNames(c(1L, 2L, 9L, 15L, 99L),
                           nm = c("ibd", "kappa", "identity", "detailed", "v"))
 
-NAME_BY_STATES_NAME <- setNames(names(STATES_BY_NAME), STATES_BY_NAME)
+NAME_BY_STATES_NAME <- stats::setNames(names(STATES_BY_NAME), STATES_BY_NAME)
 
 STATES_IBD <- STATES_BY_NAME["ibd"]
 STATES_KAPPA <- STATES_BY_NAME["kappa"]

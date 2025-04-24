@@ -35,6 +35,7 @@
 #' m4
 #'
 #' stopifnot(all.equal(0.25^3, m4$mean))
+#' @importFrom stats integrate
 #' @export
 total_ibd_dist_moments <- function(pedigree,
                                      ids = pedtools::leaves(pedigree),
@@ -82,8 +83,8 @@ total_ibd_dist_moments <- function(pedigree,
 
   E_I_squared <- sapply(chromosome_length, function(l){
     1 / (0.5 * l^2) *
-      integrate(f = Vectorize(function(x){
-        integrate(f = Vectorize(function(y) {
+      stats::integrate(f = Vectorize(function(x){
+        stats::integrate(f = Vectorize(function(y) {
 
           rho <-  0.5 * (1 - exp(-2 * 0.01* (x - y)))
 

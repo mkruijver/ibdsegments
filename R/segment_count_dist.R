@@ -31,6 +31,7 @@
 #' mean(r$stats$segment_count)
 #' sd(r$stats$segment_count)
 #'
+#' @importFrom stats qpois dpois
 #' @export
 segment_count_dist <- function(pedigree,
                            ids = pedtools::leaves(pedigree),
@@ -52,7 +53,7 @@ segment_count_dist <- function(pedigree,
 
   lambda_max <- 0.01 * max(chromosome_length) * i$number_of_relevant_transmissions
 
-  joint_n_max <- qpois(1.0 - 1e-16, lambda = lambda_max)
+  joint_n_max <- stats::qpois(1.0 - 1e-16, lambda = lambda_max)
 
   if (is.infinite(joint_n_max)){
     stop("n_max is infinite")
@@ -72,10 +73,10 @@ segment_count_dist <- function(pedigree,
     lambda <- 0.01 * chromosome_length[i_chromosome] *
       i$number_of_relevant_transmissions
 
-    n_max <- qpois(1.0 - 1e-16, lambda = lambda)
+    n_max <- stats::qpois(1.0 - 1e-16, lambda = lambda)
     n <- 0:n_max
 
-    pr_n <- dpois(x = n, lambda = lambda)
+    pr_n <- stats::dpois(x = n, lambda = lambda)
     pr_n_padded <- c(pr_n, rep(0, ncol(V) - length(pr_n)))
 
     x <- 0:(nrow(V) - 1)
@@ -104,13 +105,13 @@ segment_count_dist <- function(pedigree,
 
 #' @method E segment_count_dist
 #' @export
-E.segment_count_dist <- function(x, m = 1){
+E.segment_count_dist <- function(x, m = 1, ...){
   sum(x$x^m * x$px)
 }
 
 #' @method var segment_count_dist
 #' @export
-var.segment_count_dist <- function(x){
+var.segment_count_dist <- function(x, ...){
   E.segment_count_dist(x, m = 2) - E.segment_count_dist(x)^2
 }
 
@@ -135,14 +136,13 @@ d.segment_count_dist <- function(dist){
 }
 
 
+#' @importFrom graphics plot points
 #' @method plot segment_count_dist
 #' @export
 plot.segment_count_dist <- function(x, ...){
 
-  args_list <- list(...)
-
-  plot(x$x, x$px, type="h",
+  graphics::plot(x$x, x$px, type="h",
        xlab = "Segment count",
        ylab = "Probability", ...)
-  points(x$x, x$px)
+  graphics::points(x$x, x$px)
 }

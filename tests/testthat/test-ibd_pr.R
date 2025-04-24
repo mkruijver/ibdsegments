@@ -11,7 +11,7 @@ compute_single_locus_relatedness_coefficients <- function(pedigree,
                                                           coefficient){
   values <- coefficient_range[[coefficient]]
 
-  setNames(sapply(values, function(x){
+  stats::setNames(sapply(values, function(x){
     d_ibd(ibd = x, pedigree = pedigree, ids = ids,
            states = coefficient)
   }),

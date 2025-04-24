@@ -82,6 +82,7 @@
 #'
 #' require(ggplot2)
 #' ggplot(df, aes(x = cM, y = y, color = Relationship)) + geom_line()
+#' @importFrom stats setNames qpois dpois
 #' @export
 total_ibd_dist <- function(pedigree,
                      ids = pedtools::leaves(pedigree),
@@ -104,7 +105,7 @@ total_ibd_dist <- function(pedigree,
                          states = states)
 
   lambda_max <- 0.01 * max(chromosome_length) * i$number_of_relevant_transmissions
-  joint_n_max <- qpois(1.0 - 1e-16, lambda = lambda_max)
+  joint_n_max <- stats::qpois(1.0 - 1e-16, lambda = lambda_max)
 
   if (is.infinite(joint_n_max)){
     stop("n_max is infinite")
@@ -126,9 +127,9 @@ total_ibd_dist <- function(pedigree,
     lambda <- 0.01 * chromosome_length[i_chromosome] *
       i$number_of_relevant_transmissions
 
-    n_max <- qpois(1.0 - 1e-16, lambda = lambda)
+    n_max <- stats::qpois(1.0 - 1e-16, lambda = lambda)
     n <- 0:n_max
-    pr_n <- setNames(dpois(x = n, lambda = lambda), n)
+    pr_n <- stats::setNames(stats::dpois(x = n, lambda = lambda), n)
 
     point_mass_0 <- pr_never_in_state(V = V, n_pr = pr_n, n_max = n_max)
     point_mass_1 <- pr_always_in_state(V = V, n_pr = pr_n, n_max = n_max)
@@ -255,43 +256,43 @@ plot.ibd_dist <- function(x, ...){
     stop("distribution has neither a continuous nor a discrete part")
   }
 
-  original_mar <- par("mar")
+  original_mar <- graphics::par("mar")
   if (has_continuous_part && has_discrete_part){
 
     # make space for the second y-axis
-    par(mar = c(5, 4, 4, 5))
+    graphics::par(mar = c(5, 4, 4, 5))
   }
 
 
   if (has_continuous_part){
     f <- d(x)
-    curve(f, from = x$low, to = x$up, n = n, xlim = xlim, ...)
-    grid()
+    graphics::curve(f, from = x$low, to = x$up, n = n, xlim = xlim, ...)
+    graphics::grid()
   }
 
   if (has_continuous_part && has_discrete_part){
     # add second axis
-    par(new = TRUE)
+    graphics::par(new = TRUE)
 
     # add point massses
-    plot(x$point_mass$x, x$point_mass$px,
+    graphics::plot(x$point_mass$x, x$point_mass$px,
         xlim = xlim,
          type = "h", lty=2,
          axes = FALSE, xlab="", ylab="")
-    points(x$point_mass$x, x$point_mass$px)
+    graphics::points(x$point_mass$x, x$point_mass$px)
 
-    axis(4)
-    mtext("p(x)", side = 4, line = 3)
+    graphics::axis(4)
+    graphics::mtext("p(x)", side = 4, line = 3)
 
   }else if (has_discrete_part){
 
-    plot(x$point_mass$x, x$point_mass$px,
+    graphics::plot(x$point_mass$x, x$point_mass$px,
          type = "h", ylab="p(x)", lty=2, ...)
 
-    points(x$point_mass$x, x$point_mass$px)
+    graphics::points(x$point_mass$x, x$point_mass$px)
   }
 
-  par(mar = original_mar)
+  graphics::par(mar = original_mar)
 }
 
 #' @export

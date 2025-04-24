@@ -41,6 +41,7 @@
   }
 }
 
+#' @importFrom utils head
 .validate_obs_compatible_with_states_idx <- function(obs, argument_name, states_idx){
   nm <- NAME_BY_STATES_NAME[as.character(states_idx)]
   if (is.null(nm)) stop("Unknown states value: ", states_idx)
@@ -61,7 +62,8 @@
     if (any(obs_is_invalid)){
       stop(argument_name, " should only take values ",
            paste(valid_obs, collapse = ", "), " for ", nm, " states. ",
-           "Invalid value(s): ", paste0(head(obs[obs_is_invalid]), collapse = ", "))
+           "Invalid value(s): ", paste0(utils::head(obs[obs_is_invalid]),
+                                        collapse = ", "))
     }
   }
 }

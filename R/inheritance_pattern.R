@@ -14,6 +14,7 @@
 #' # wihtout exploiting founder symmetry
 #' i2 <- inheritance_space(ped_fs, ids = 3:4, exploit_symmetries = FALSE)
 #' inheritance_pattern(i2, v = 0:15)
+#' @importFrom stats setNames
 #' @export
 inheritance_pattern <- function(inheritance_space, v){
 
@@ -30,7 +31,7 @@ inheritance_pattern <- function(inheritance_space, v){
                                              top_to_bottom_order = inheritance_space$transmissions$top_to_bottom_order)
 
   df <- data.frame(v = v,
-                   t(setNames(founder_labels,
+                   t(stats::setNames(founder_labels,
                               nm = inheritance_space$pedigree$ID)),
                    check.names = FALSE, row.names = NULL)
 
