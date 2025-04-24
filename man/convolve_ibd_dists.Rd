@@ -75,7 +75,8 @@ hs <- total_ibd_dist(pedigree = ped_hs,
 mean_hat <- sum(sapply(hs, E))
 sd_hat <- sqrt(sum(sapply(hs, var)))
 
-# .. or by summing the distributions
+# .. or by summing the distributions with varying numbers of gridpoints
+k <- 6:10
 sd_hat_by_k <- sapply(k, function(k) sd(convolve_ibd_dists(hs,
                                         number_of_gridpoints_exponent = k)))
 mean_hat_by_k <- sapply(k, function(k) E(convolve_ibd_dists(hs,
