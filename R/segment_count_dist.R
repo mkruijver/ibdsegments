@@ -123,7 +123,10 @@ sd.segment_count_dist <- function(x, ...){
 
 #' @method d segment_count_dist
 #' @export
-d.segment_count_dist <- function(dist){
+d.segment_count_dist <- function(x, ...){
+
+  dist <- x
+
   function(x){
 
     idx <- match(x, dist$x)

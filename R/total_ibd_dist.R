@@ -193,7 +193,7 @@ d <- function(x, ...){
 
 #' @method d ibd_dist
 #' @export
-d.ibd_dist <- function(x){
+d.ibd_dist <- function(x, ...){
   x$f_continuous
 }
 
@@ -204,7 +204,8 @@ E <- function(x, ...){
 
 #' @method E ibd_dist
 #' @export
-E.ibd_dist <- function(x, m = 1){
+#' @importFrom stats integrate
+E.ibd_dist <- function(x, m = 1, ...){
 
   E_mixed <- 0.
 
@@ -212,7 +213,7 @@ E.ibd_dist <- function(x, m = 1){
   if (w > 0){
     f <- d(x)
 
-    E_continuous <- integrate(function(x) (x^m) * f(x),
+    E_continuous <- stats::integrate(function(x) (x^m) * f(x),
                               lower = x$low, upper = x$up)$val
     E_mixed <- E_mixed + E_continuous * w
   }
@@ -226,15 +227,16 @@ E.ibd_dist <- function(x, m = 1){
 }
 
 #' @export
-var.ibd_dist <- function(x){
+var.ibd_dist <- function(x, ...){
   E.ibd_dist(x, m = 2) - E.ibd_dist(x)^2
 }
 
 #' @export
-sd.ibd_dist <- function(x){
+sd.ibd_dist <- function(x, ...){
   sqrt(var.ibd_dist(x))
 }
 
+#' @importFrom graphics par plot curve grid point axis mtext
 #' @export
 plot.ibd_dist <- function(x, ...){
 

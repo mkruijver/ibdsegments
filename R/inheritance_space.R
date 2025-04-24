@@ -87,7 +87,7 @@ inheritance_space <- function(pedigree, ids, states = "ibd",
 
 
 #' @export
-print.inheritance_space <- function(x){
+print.inheritance_space <- function(x, ...){
   number_of_pedigree_members <- length(x$pedigree$ID)
   number_of_pedigree_founders <- sum(x$pedigree$FIDX==0)
   number_of_pedigree_non_founders <- number_of_pedigree_members - number_of_pedigree_founders
