@@ -131,7 +131,7 @@ List random_ibd(int n,
   samples.attr("class") = "data.frame";
 
   List stats = List::create(Named("total_length") = stats_total_length_in_state,
-                            Named("segments") = stats_number_of_segments_in_state);
+                            Named("segment_count") = stats_number_of_segments_in_state);
   stats.attr("row.names") = Rcpp::seq(1, n);
   stats.attr("class") = "data.frame";
 
