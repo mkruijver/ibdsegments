@@ -6,6 +6,17 @@
 \usage{
 inheritance_space(pedigree, ids, states = "ibd", exploit_symmetries = TRUE)
 }
+\arguments{
+\item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
+
+\item{ids}{Ids for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
+
+\item{states}{One of \code{"ibd"} (default), \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
+
+\item{exploit_symmetries}{Should symmetries be used to reduce to state space?
+This can be set to \code{FALSE} for debugging purposes.}
+}
 \description{
 The \code{inheritance_space} function determines the space of IBD vectors for a pedigree.
+This is mostly for internal use but may be interesting by itself.
 }

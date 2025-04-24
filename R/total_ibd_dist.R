@@ -186,20 +186,10 @@ total_ibd_dist <- function(pedigree,
   fs
 }
 
-#' @export
-d <- function(x, ...){
-  UseMethod("d")
-}
-
 #' @method d ibd_dist
 #' @export
 d.ibd_dist <- function(x, ...){
   x$f_continuous
-}
-
-#' @export
-E <- function(x, ...){
-  UseMethod("E")
 }
 
 #' @method E ibd_dist

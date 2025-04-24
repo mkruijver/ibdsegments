@@ -6,6 +6,11 @@
 \usage{
 inheritance_pattern(inheritance_space, v)
 }
+\arguments{
+\item{inheritance_space}{Output of \link{inheritance_space}.}
+
+\item{v}{Integer}
+}
 \description{
 The \code{inheritance_pattern} function determines the inheritance pattern for all
 pedigree members by dropping the founder allele labels down the pedigree
@@ -18,7 +23,7 @@ i <- inheritance_space(ped_fs, ids = 3:4)
 # show the inheritance pattern and IBD state for all canonical IBD vectors
 inheritance_pattern(i, v = 0:3)
 
-# wihtout exploiting founder symmetry
+# without exploiting founder symmetry
 i2 <- inheritance_space(ped_fs, ids = 3:4, exploit_symmetries = FALSE)
 inheritance_pattern(i2, v = 0:15)
 }

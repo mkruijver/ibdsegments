@@ -4,6 +4,9 @@
 #' pedigree members by dropping the founder allele labels down the pedigree
 #' according to the IBD vector `v`.
 #'
+#' @param inheritance_space Output of [inheritance_space].
+#' @param v Integer
+#'
 #' @examples
 #' ped_fs <- pedtools::nuclearPed(nch = 2)
 #' i <- inheritance_space(ped_fs, ids = 3:4)
@@ -11,7 +14,7 @@
 #' # show the inheritance pattern and IBD state for all canonical IBD vectors
 #' inheritance_pattern(i, v = 0:3)
 #'
-#' # wihtout exploiting founder symmetry
+#' # without exploiting founder symmetry
 #' i2 <- inheritance_space(ped_fs, ids = 3:4, exploit_symmetries = FALSE)
 #' inheritance_pattern(i2, v = 0:15)
 #' @importFrom stats setNames
