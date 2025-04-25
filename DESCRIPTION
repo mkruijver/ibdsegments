@@ -1,10 +1,13 @@
 Package: ibdsegments
-Title: Probability of IBD and IBD Segments
+Title: Identity by Descent Probability in Pedigrees
 Version: 0.0.0.9000
 Authors@R: 
     person("Maarten", "Kruijver", , "maarten.kruijver@esr.cri.nz", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0002-6890-7632"))
-Description: What the package does (one paragraph).
+Description: Tools for Identity by Descent (IBD) in pedigrees. A Hidden Markov 
+    Model is used to compute identity coefficients, simulate IBD segments and 
+    to derive the distribution of total IBD sharing and segment count across 
+    chromosomes.
 License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

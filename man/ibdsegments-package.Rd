@@ -4,14 +4,9 @@
 \name{ibdsegments-package}
 \alias{ibdsegments}
 \alias{ibdsegments-package}
-\title{ibdsegments: Probability of IBD and IBD Segments}
+\title{ibdsegments: Identity by Descent Probability in Pedigrees}
 \description{
-What the package does (one paragraph).
-
-xx
-}
-\details{
-TODO
+Tools for Identity by Descent (IBD) in pedigrees. A Hidden Markov Model is used to compute identity coefficients, simulate IBD segments and to derive the distribution of total IBD sharing and segment count across chromosomes.
 }
 \author{
 \strong{Maintainer}: Maarten Kruijver \email{maarten.kruijver@esr.cri.nz} (\href{https://orcid.org/0000-0002-6890-7632}{ORCID})

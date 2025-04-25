@@ -5,10 +5,6 @@
 
 #' ibdsegments
 #'
-#' xx
-#'
-#' TODO
-#'
 #' @name ibdsegments-package
 #' @aliases ibdsegments-package
 #'
