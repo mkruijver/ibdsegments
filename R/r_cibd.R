@@ -1,6 +1,8 @@
 #' Random generation for IBD on a continuous genome
 #'
-#' The `r_cibd`
+#' The `r_cibd` function generates random Identity-by-Descent (IBD) segments
+#' along a continuous genome, given a specified pedigree and observed
+#' individuals.
 #'
 #' @param n Number of observations
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
@@ -8,6 +10,11 @@
 #' @param states One of `"ibd` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
+#'
+#' @return A list containing:
+#'   \item{samples}{Data frame of simulated IBD segments along the chromosome.}
+#'   \item{stats}{Data frame with summary statistics per sample,
+#'   including total IBD length and the segment count.}
 #'
 #' @examples
 #' ## Basic example: IBD along one chromosome for half siblings

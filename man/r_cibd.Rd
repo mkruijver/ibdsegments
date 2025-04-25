@@ -26,8 +26,16 @@ r_cibd(
 
 \item{chromosome_length}{Default is 267.77 cM (an estimate of the length of chromosome 1).}
 }
+\value{
+A list containing:
+\item{samples}{Data frame of simulated IBD segments along the chromosome.}
+\item{stats}{Data frame with summary statistics per sample,
+including total IBD length and the segment count.}
+}
 \description{
-The \code{r_cibd}
+The \code{r_cibd} function generates random Identity-by-Descent (IBD) segments
+along a continuous genome, given a specified pedigree and observed
+individuals.
 }
 \examples{
 ## Basic example: IBD along one chromosome for half siblings
