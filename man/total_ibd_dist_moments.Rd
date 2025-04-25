@@ -16,7 +16,7 @@ total_ibd_dist_moments(
 \arguments{
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
-\item{ids}{Ids for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
+\item{ids}{Ids for which IBD is observed. Default is \code{pedtools::leaves(pedigree)}.}
 
 \item{fraction}{If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.}
 

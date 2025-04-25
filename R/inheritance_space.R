@@ -4,7 +4,7 @@
 #' This is mostly for internal use but may be interesting by itself.
 #'
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
-#' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
+#' @param ids Ids for which IBD is observed. Default is `pedtools::leaves(pedigree)`.
 #' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param exploit_symmetries Should symmetries be used to reduce to state space?
 #'                           This can be set to `FALSE` for debugging purposes.

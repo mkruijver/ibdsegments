@@ -9,7 +9,7 @@
 #' the number of IBD segments rather than the total IBD length.
 #'
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
-#' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
+#' @param ids Ids for which IBD is observed. Default is `pedtools::leaves(pedigree)`.
 #' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).

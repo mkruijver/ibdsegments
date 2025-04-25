@@ -16,7 +16,7 @@
 #' for details and finer control.
 #'
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
-#' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
+#' @param ids Ids for which IBD is observed. Default is `pedtools::leaves(pedigree)`.
 #' @param fraction If TRUE, the distribution of the IBD fraction instead of length will be returned. Default is FALSE.
 #' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param ibd_state Default is 1.

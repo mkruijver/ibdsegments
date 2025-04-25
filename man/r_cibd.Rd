@@ -18,7 +18,7 @@ r_cibd(
 
 \item{pedigree}{Pedigree in \code{\link[pedtools:ped]{pedtools::ped}} form.}
 
-\item{ids}{Ids for which IBD is observed. Defaults to \href{pedigree}{\code{pedtools::leaves}}.}
+\item{ids}{Ids for which IBD is observed. Default is \code{pedtools::leaves(pedigree)}.}
 
 \item{states}{One of \verb{"ibd} (default), \code{"kappa"}, \code{"identity"} or \code{"detailed"}.}
 

@@ -6,7 +6,7 @@
 #' @param x Numeric vector with lengths of segments (centiMorgan) or result from [`r_cibd`].
 #' @param ibd Integer vector with IBD states in segments if `x` is not a result from `r_cibd`. Taking values 0, 1, 2 for `states = "ibd"` or `states = "kappa"`, 1, ..., 9 for `states="identity"` and 1, ..., 15 for `states = "detailed"`.
 #' @param pedigree Pedigree in [`pedtools::ped`] form.
-#' @param ids Ids for which IBD is observed. Defaults to [`pedtools::leaves`](pedigree).
+#' @param ids Ids for which IBD is observed. Default is `pedtools::leaves(pedigree)`.
 #' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param log10 Should the log10 probability density be returned? Default is `FALSE`.
 #' @return Numeric
