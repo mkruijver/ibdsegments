@@ -33,7 +33,7 @@ total_ibd_dist(
 \item{...}{Additional parameters passed to \code{\link{convolve_total_ibd_dists}} when \code{convolve=TRUE}.}
 }
 \value{
-object of class \code{ibd_dist}
+object of class \code{total_ibd_dist}
 }
 \description{
 The \code{total_ibd_dist} function computes the probability distribution

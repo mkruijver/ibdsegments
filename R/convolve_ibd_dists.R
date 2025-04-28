@@ -32,7 +32,7 @@
 #' @param ... ibd dists.
 #' @param point_mass_eps Point masses smaller than this value are discarded.
 #' @param number_of_gridpoints_exponent Default is 12.
-#' @return ibd_dist
+#' @return Object of class `total_ibd_dist`
 #' @examples
 #' ## Convolution of IBD distributions for half siblings at chromosome 1 and 2
 #'
@@ -89,7 +89,7 @@ convolve_total_ibd_dists <- function(...,
   partial_sum <- x[[o[1]]]
 
   for(i in o[-1]){
-    partial_sum <- convolve_two_ibd_dists(partial_sum,
+    partial_sum <- convolve_two_total_ibd_dists(partial_sum,
                                           x[[i]], point_mass_eps,
                                           number_of_gridpoints_exponent)
   }
@@ -98,9 +98,9 @@ convolve_total_ibd_dists <- function(...,
 }
 
 #' @importFrom stats fft approxfun
-convolve_two_ibd_dists <- function(d1, d2, point_mass_eps, number_of_gridpoints_exponent){
-  .validate_ibs_dist(d1)
-  .validate_ibs_dist(d2)
+convolve_two_total_ibd_dists <- function(d1, d2, point_mass_eps, number_of_gridpoints_exponent){
+  .validate_total_ibd_dist(d1)
+  .validate_total_ibd_dist(d2)
   .validate_not_ibd_fraction_dist(d1)
   .validate_not_ibd_fraction_dist(d2)
 
@@ -196,7 +196,7 @@ convolve_two_ibd_dists <- function(d1, d2, point_mass_eps, number_of_gridpoints_
                    chromosome_length = new_length,
                    weight_continuous = sum_weight_cont,
                    point_mass = point_mass)
-  class(dist_sum) <- "ibd_dist"
+  class(dist_sum) <- "total_ibd_dist"
 
   dist_sum
 }

@@ -23,7 +23,7 @@
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
 #' @param convolve Should the distribution of the sum (across chromosomes) be obtained?
 #' @param ... Additional parameters passed to [`convolve_total_ibd_dists`] when `convolve=TRUE`.
-#' @return object of class `ibd_dist`
+#' @return object of class `total_ibd_dist`
 #' @examples
 #' ## Total IBD and fraction of IBD for a cousin relationship
 #' ped_fc <- pedtools::cousinPed()
@@ -157,7 +157,7 @@ total_ibd_dist <- function(pedigree,
                             weight_continuous = weight_continuous,
                             point_mass = point_mass)
 
-    class(dist_chromosome) <- "ibd_dist"
+    class(dist_chromosome) <- "total_ibd_dist"
 
     dist_chromosome
   })
@@ -186,16 +186,16 @@ total_ibd_dist <- function(pedigree,
   fs
 }
 
-#' @method d ibd_dist
+#' @method d total_ibd_dist
 #' @export
-d.ibd_dist <- function(x, ...){
+d.total_ibd_dist <- function(x, ...){
   x$f_continuous
 }
 
-#' @method E ibd_dist
+#' @method E total_ibd_dist
 #' @export
 #' @importFrom stats integrate
-E.ibd_dist <- function(x, m = 1, ...){
+E.total_ibd_dist <- function(x, m = 1, ...){
 
   E_mixed <- 0.
 
@@ -217,18 +217,18 @@ E.ibd_dist <- function(x, m = 1, ...){
 }
 
 #' @export
-var.ibd_dist <- function(x, ...){
-  E.ibd_dist(x, m = 2) - E.ibd_dist(x)^2
+var.total_ibd_dist <- function(x, ...){
+  E.total_ibd_dist(x, m = 2) - E.total_ibd_dist(x)^2
 }
 
 #' @export
-sd.ibd_dist <- function(x, ...){
-  sqrt(var.ibd_dist(x))
+sd.total_ibd_dist <- function(x, ...){
+  sqrt(var.total_ibd_dist(x))
 }
 
 #' @importFrom graphics par plot curve grid points axis mtext
 #' @export
-plot.ibd_dist <- function(x, ...){
+plot.total_ibd_dist <- function(x, ...){
 
   args_list <- list(...)
 
@@ -288,7 +288,7 @@ plot.ibd_dist <- function(x, ...){
 }
 
 #' @export
-print.ibd_dist = function(x, ...) {
+print.total_ibd_dist = function(x, ...) {
   cat("Probability distribution of",
       if (x$fraction) "fraction" else "total length",
       "of segments in",

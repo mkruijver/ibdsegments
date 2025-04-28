@@ -110,9 +110,9 @@
   }
 }
 
-.validate_ibs_dist <- function(x){
-  if (!inherits(x, "ibd_dist")){
-    stop("distribution should be of class ibd_dist")
+.validate_total_ibd_dist <- function(x){
+  if (!inherits(x, "total_ibd_dist")){
+    stop("distribution should be of class total_ibd_dist")
   }
 }
 

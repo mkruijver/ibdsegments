@@ -18,7 +18,7 @@ convolve_total_ibd_dists(
 \item{number_of_gridpoints_exponent}{Default is 12.}
 }
 \value{
-ibd_dist
+Object of class \code{total_ibd_dist}
 }
 \description{
 Chromosome-wise IBD distributions obtained from the \code{total_ibd_dist}

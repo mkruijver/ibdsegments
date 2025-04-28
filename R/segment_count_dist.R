@@ -14,7 +14,7 @@
 #' @param ibd_state Default is 1.
 #' @param chromosome_length Default is 267.77 cM (an estimate of the length of chromosome 1).
 #' @param convolve Should the distribution of the sum (across chromosomes) be obtained?
-#' @return object of class `ibd_dist`
+#' @return object of class `segment_count_dist`
 #'
 #' @seealso [total_ibd_dist()] for the distribution of IBD *length*.
 #'

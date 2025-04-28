@@ -27,7 +27,7 @@ segment_count_dist(
 \item{convolve}{Should the distribution of the sum (across chromosomes) be obtained?}
 }
 \value{
-object of class \code{ibd_dist}
+object of class \code{segment_count_dist}
 }
 \description{
 The \code{segment_count_dist} function computes the probability distribution
