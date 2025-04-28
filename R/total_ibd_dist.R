@@ -248,13 +248,12 @@ plot.ibd_dist <- function(x, ...){
     stop("distribution has neither a continuous nor a discrete part")
   }
 
-  original_mar <- graphics::par("mar")
   if (has_continuous_part && has_discrete_part){
-
     # make space for the second y-axis
-    graphics::par(mar = c(5, 4, 4, 5))
+    original_mar <- graphics::par(mar = c(5, 4, 4, 5))
+    # reliably restore mar
+    on.exit(graphics::par(mar = original_mar))
   }
-
 
   if (has_continuous_part){
     f <- d(x)
@@ -264,9 +263,11 @@ plot.ibd_dist <- function(x, ...){
 
   if (has_continuous_part && has_discrete_part){
     # add second axis
-    graphics::par(new = TRUE)
+    original_new <- graphics::par(new = TRUE)
+    # reliably restore new
+    on.exit(graphics::par(new = original_new))
 
-    # add point massses
+    # add point masses
     graphics::plot(x$point_mass$x, x$point_mass$px,
         xlim = xlim,
          type = "h", lty=2,
@@ -284,7 +285,6 @@ plot.ibd_dist <- function(x, ...){
     graphics::points(x$point_mass$x, x$point_mass$px)
   }
 
-  graphics::par(mar = original_mar)
 }
 
 #' @export
