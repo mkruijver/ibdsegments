@@ -6,7 +6,7 @@
 \alias{ibdsegments-package}
 \title{ibdsegments: Identity by Descent Probability in Pedigrees}
 \description{
-Identity by Descent (IBD) distributions in pedigrees. A Hidden Markov Model is used to compute identity coefficients, simulate IBD segments and to derive the distribution of total IBD sharing and segment count across chromosomes.
+Identity by Descent (IBD) distributions in pedigrees. A Hidden Markov Model is used to compute identity coefficients, simulate IBD segments and to derive the distribution of total IBD sharing and segment count across chromosomes. The methods are applied in Kruijver (2025) \doi{10.3390/genes16050492}. The probability that the total IBD sharing is zero can be computed using the method of Donnelly (1983) \doi{10.1016/0040-5809(83)90004-7}.
 }
 \author{
 \strong{Maintainer}: Maarten Kruijver \email{maarten.kruijver@esr.cri.nz} (\href{https://orcid.org/0000-0002-6890-7632}{ORCID})
