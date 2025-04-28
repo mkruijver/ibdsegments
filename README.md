@@ -40,7 +40,7 @@ library(ibdsegments)
 #>     sd, var
 ```
 
-#### Identity coefficients
+## Identity coefficients
 
 The `d_ibd` function may be used to compute identity coefficients. The
 example shows how to compute the `kappa` coefficients for half siblings.
@@ -79,7 +79,7 @@ d_ibd(ibd = 2, pedigree = ped_3fs, states = "ibd")
 #> [1] 0.0625
 ```
 
-#### Random sampling of IBD segments
+## Random sampling of IBD segments
 
 The identity coefficients computed above are IBD probabilities at single
 positions on a chromosome. Taking a continuous view, the fraction of the
@@ -98,11 +98,11 @@ r_cibd(n = 1, pedigree = ped_hs, states = "kappa", chromosome_length = 100)
 #> 4      1          1 82.15168 100.00000 17.848319     0
 #> 
 #> $stats
-#>   total_length segments
-#> 1     75.16192        2
+#>   total_length segment_count
+#> 1     75.16192             2
 ```
 
-### IBD distribution
+## Total IBD distribution
 
 The `total_ibd_dist` function obtains the full distribution of the total
 length of IBD segments across a chromosome. For example, we may obtain
@@ -142,7 +142,7 @@ sd(d_hs)
 #> [1] 30.71195
 ```
 
-## Convolution of IBD distributions
+## Convolution of total IBD distributions
 
 The convolution of the total IBD distribution across chromosomes is
 obtained when the `chromosome_length` parameter has length greater than
@@ -150,7 +150,7 @@ obtained when the `chromosome_length` parameter has length greater than
 
 ``` r
 d_hs_conv <- total_ibd_dist(ped_hs, 
-                       chromosome_length = c(250, 200, 150, 150, 100))
+                            chromosome_length = c(250, 200, 150, 150, 100))
 plot(d_hs_conv)
 ```
 
