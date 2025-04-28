@@ -9,7 +9,10 @@ inheritance_pattern(inheritance_space, v)
 \arguments{
 \item{inheritance_space}{Output of \link{inheritance_space}.}
 
-\item{v}{Integer}
+\item{v}{Integer.}
+}
+\value{
+Data frame describing inheritance pattern and IBD state for each \code{v}.
 }
 \description{
 The \code{inheritance_pattern} function determines the inheritance pattern for all

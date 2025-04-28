@@ -8,6 +8,18 @@
 #' @param states One of `"ibd"` (default), `"kappa"`, `"identity"` or `"detailed"`.
 #' @param exploit_symmetries Should symmetries be used to reduce to state space?
 #'                           This can be set to `FALSE` for debugging purposes.
+#'
+#' @returns Object of class `inheritance_space`.
+#' @examples
+#' # set up inheritance space for half sib pedigree
+#' i <- inheritance_space(pedigree = pedtools::halfSibPed())
+#'
+#' # since there are 2 non-founders, there are 2^4 IBD vectors
+#' # but only 2 distinct states are considered because of symmetries
+#' i
+#'
+#' # pry into the internals to see individual pedigree transmissions
+#' i$transmissions
 #' @export
 inheritance_space <- function(pedigree, ids, states = "ibd",
                               exploit_symmetries = TRUE){

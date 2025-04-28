@@ -5,8 +5,9 @@
 #' according to the IBD vector `v`.
 #'
 #' @param inheritance_space Output of [inheritance_space].
-#' @param v Integer
+#' @param v Integer.
 #'
+#' @returns Data frame describing inheritance pattern and IBD state for each `v`.
 #' @examples
 #' ped_fs <- pedtools::nuclearPed(nch = 2)
 #' i <- inheritance_space(ped_fs, ids = 3:4)
